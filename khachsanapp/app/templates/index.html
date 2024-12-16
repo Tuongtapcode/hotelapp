@@ -1,0 +1,126 @@
+{% extends 'layout/base.html' %}
+
+
+{% block content %}
+<header>
+    <div class="anhchuyen">
+        <!-- images -->
+        <div class="list">
+            <div class="item">
+                <img src="/static/image/anhchuyen1.jpg" alt="anhchuyen">
+            </div>
+            <div class="item">
+                <img src="/static/image/anhchuyen2.jpg" alt="anhchuyen">
+            </div>
+            <div class="item">
+
+                <img src="/static/image/anhchuyen3.jpg" alt="anhchuyen">
+            </div>
+            <div class="item">
+
+                <img src="/static/image/anhchuyen4.jpg" alt="anhchuyen">
+            </div>
+            <div class="item">
+                <img src="/static/image/anhchuyen5.png" alt="nội dung mới nhất">
+            </div>
+        </div>
+
+        <!-- button prev next -->
+        <div class="buttons">
+            <button id="prev"><i class="ti-angle-left"></i></button>
+            <button id="next"><i class="ti-angle-right"></i></button>
+        </div>
+        <ul class="dots">
+            <li class="active"></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+    </div>
+</header>
+<main class="container mt-5">
+    <div>
+        <h2>Tìm kiếm nhanh</h2>
+    </div>
+    <form action="/search" method="GET" class="search-form-horizontal">
+        <!-- Loại phòng -->
+        <div class="form-group">
+            <span class="form-placeholder">Loại phòng</span>
+            <select class="form-control" name="room_type_id" aria-label="Loại phòng">
+                <option value="">Room type</option>
+                <option value="1">Phòng Deluxe</option>
+                <option value="2">Phòng Suite</option>
+                <option value="3">Phòng Superior</option>
+            </select>
+        </div>
+
+        <!-- Số người -->
+        <div class="form-group">
+            <span class="form-placeholder">Số người</span>
+            <input type="number" min="1" class="form-control" name="max_occupancy" placeholder="Số người"
+                   aria-label="Số người">
+        </div>
+
+        <!-- Giá cả -->
+        <div class="form-group">
+            <span class="form-placeholder">Giá cả</span>
+            <input type="number" min="0" class="form-control" name="price" placeholder="Price (Thousand VND)/Night"
+                   aria-label="Giá cả">
+        </div>
+
+        <!-- Check-in -->
+        <div class="form-group">
+            <span class="form-placeholder">Check-in</span>
+            <input type="date" id="checkin" class="form-control" name="check_in" aria-label="Check-in">
+        </div>
+
+        <!-- Check-out -->
+        <div class="form-group">
+            <span class="form-placeholder">Check-out</span>
+            <input type="date" id="checkout" class="form-control" name="check_out" aria-label="Check-out">
+        </div>
+
+        <!-- Nút tìm kiếm -->
+        <button type="submit" class="btn btn-search">Tìm kiếm</button>
+    </form>
+    <section id="recommendations-rooms">
+        <div>
+            <h2>Đề xuất dành cho bạn</h2>
+        </div>
+        <div class="row">
+            {% for room in rooms %}
+            <div class="col-md-4 col-12 p-4">
+                <div class="room-card">
+                    <div class="room-image">
+                        <img src="{{room.image}}" alt="{{ room.name }}">
+                    </div>
+                    <div class="room-info">
+                        <h2>{{ room.name }} {{test}}</h2>
+                        <p>{{ room.description }}</p>
+                        <ul>
+                            <li>👤 Sức chứa: {{ room.max_occupancy }} người</li>
+                            <li>🏠 Diện tích: {{ room.size }}m²</li>
+                            <li>💵 Giá thành viên: {{ room.room_price.price_per_night }} nghìn VNĐ/đêm</li>
+                        </ul>
+                        <div class="actions-room">
+                            <form method="POST" action="/book-room">
+                                <input type="hidden" name="room_id" value="{{ room.id }}">
+                                <button type="submit" class="book-now">Đặt Ngay</button>
+                            </form>
+                            <form method="POST" action="/book-room">
+                                <input type="hidden" name="room_id" value="{{ room.id }}">
+                                <button class="view-more">Xem Thêm</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    </section>
+</main>
+
+{% endblock %}

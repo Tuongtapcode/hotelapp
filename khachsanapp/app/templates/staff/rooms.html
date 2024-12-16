@@ -1,0 +1,163 @@
+{% extends 'staff/layout/base.html' %}
+{% block title %}Rooms Management{% endblock %}
+
+{% block content %}
+<div class="container">
+    <form method="get" action="/staff/rooms">
+        <div class="d-flex align-items-center  mb-4">
+            <h1 class="me-3">Rooms Management</h1>
+            <select class="form-select w-auto" name="layer" onchange="this.form.submit()">
+                <option value="">Layer</option>
+                {% for l in layers %}
+                <option value="{{ l }}" {% if request.args.get(
+                'layer') == l %}selected{% endif %}>
+                Layer: {{ l }}
+                </option>
+                {% endfor %}
+            </select>
+
+        </div>
+        <div class="row mb-3">
+            <!-- Search Field -->
+            <div class="col-md-6">
+                <input type="text" class="form-control" name="search"
+                       value="{{ request.args.get('search', '') }}"
+                       placeholder="Search by Room Name or ID">
+            </div>
+
+            <!-- Filter by Status -->
+            <div class="col-md-3">
+                <select class="form-select" name="room_status_id" onchange="this.form.submit()">
+                    <option value="">Filter by Status</option>
+                    {% for status in room_statuses %}
+                    <option value="{{ status.id }}"
+                            {% if request.args.get(
+                    'room_status_id') == status.id|string %}selected{% endif %}>
+                    {{ status.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Filter by Type -->
+            <div class="col-md-3">
+                <select class="form-select" name="room_type_id" onchange="this.form.submit()">
+                    <option value="">Filter by Type</option>
+                    {% for type in room_types %}
+                    <option value="{{ type.id }}"
+                            {% if request.args.get(
+                    'room_type_id') == type.id|string %}selected{% endif %}>
+                    {{ type.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </form>
+    <!-- Danh sách phòng -->
+    <div class="container mt-5">
+        <h1>Room Management</h1>
+        <!-- Room Cards -->
+        <div class="row">
+            {% for room in rooms %}
+            <div class="col-md-4 col-lg-3 p-2">
+                <div class="card room-card" data-room-id="{{ room.id }}" data-room-status="{{ room.room_status.name }}">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        {% if room.room_status.name == 'Available' %}
+                        <span class="badge bg-success">Available</span>
+                        {% elif room.room_status.name == 'Booked' %}
+                        <span class="badge bg-warning">Booked</span>
+                        {% elif room.room_status.name == 'Checked' %}
+                        <span class="badge bg-danger">Checked</span>
+                        {% endif %}
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">P.{{ room.id }}</h5>
+                        <p>Loại phòng: {{ room.room_type }}</p>
+                        <p>Diện tích: {{ room.size }} m²</p>
+                        <p>Phòng cho: {{ room.max_occupancy }} người</p>
+                        <p>Giá cả: {{ room.room_price.price_per_night }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="roomModal" tabindex="-1" aria-labelledby="roomModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- Thêm lớp modal-lg -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="roomModalLabel">Thông tin phòng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="modal-body-content">
+                    <!-- Nội dung form sẽ được load vào đây -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function loadFormContent(roomId, status) {
+            let content = '';
+            if (status === 'Available') {
+                content = `
+                 <h5>Đặt phòng hoặc Nhận phòng - P.${roomId}</h5>
+            <form>
+                <div class="mb-3">
+                    <label for="customerName" class="form-label">Tên khách hàng</label>
+                    <input type="text" class="form-control" id="customerName" placeholder="Nhập tên khách hàng">
+                </div>
+                <div class="mb-3">
+                    <label for="startDate" class="form-label">Ngày bắt đầu</label>
+                    <input type="date" class="form-control" id="startDate">
+                </div>
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">Đặt phòng</button>
+                    <button type="button" class="btn btn-success">Nhận phòng (Check-in)</button>
+                </div>
+            </form>
+            `;
+            } else if (status === 'Booked') {
+                content = `
+                <h5>Nhận phòng hoặc Hủy đặt - P.${roomId}</h5>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-success">Nhận phòng (Check-in)</button>
+                    <button class="btn btn-danger">Hủy đặt phòng</button>
+                </div>
+            `;
+            } else if (status === 'Checked') {
+                content = `
+                <h5>Trả phòng - P.${roomId}</h5>
+                <form>
+                    <div class="mb-3">
+                        <label for="checkoutDate" class="form-label">Ngày trả phòng</label>
+                        <input type="date" class="form-control" id="checkoutDate">
+                    </div>
+                    <button type="submit" class="btn btn-danger">Trả phòng</button>
+                </form>
+            `;
+            } else {
+                content = `<p>Không xác định trạng thái phòng.</p>`;
+            }
+
+            document.getElementById('modal-body-content').innerHTML = content;
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const roomCards = document.querySelectorAll(".room-card");
+            roomCards.forEach(function (card) {
+                card.addEventListener("click", function () {
+                    const roomId = card.getAttribute("data-room-id");
+                    const roomStatus = card.getAttribute("data-room-status");
+                    loadFormContent(roomId, roomStatus);
+
+                    // Hiển thị Modal
+                    var myModal = new bootstrap.Modal(document.getElementById('roomModal'));
+                    myModal.show();
+                });
+            });
+        });
+    </script>
+
+    {% endblock %}

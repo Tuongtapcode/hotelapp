@@ -1,0 +1,20 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+<main class="container">
+    <div class="confirm-booking-container">
+        <h1>XÁC NHẬN ĐẶT PHÒNG</h1>
+
+        <p>Cảm ơn bạn đã đặt phòng tại hệ thống của chúng tôi!</p>
+
+        <h3>Thông Tin Đặt Phòng</h3>
+        <ul>
+            <li><strong>Tên khách hàng:</strong> {{ customer.name }}</li>
+            <li><strong>Phòng:</strong> {{ room.name }}</li>
+            <li><strong>Thời gian Check-In:</strong> {{ booking.checkin }}</li>
+            <li><strong>Thời gian Check-Out:</strong> {{ booking.checkout }}</li>
+        </ul>
+    </div>
+</main>
+
+{% endblock %}

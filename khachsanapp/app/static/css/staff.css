@@ -1,0 +1,57 @@
+/*
+
+Staff
+
+*/
+.room-card {
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+    font-family: 'Arial', sans-serif; /* Font mặc định */
+    padding: 15px;
+}
+
+.room-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Kích thước font cho tiêu đề phòng */
+.room-card .card-title {
+    font-weight: bold;
+    font-size: 1.5rem; /* Tiêu đề (mã phòng) lớn hơn để dễ nhìn */
+    color: #333; /* Màu tối để nổi bật */
+}
+
+/* Kích thước font cho nhãn trạng thái */
+.room-card .badge {
+    font-size: 1rem; /* Tăng kích thước nhãn trạng thái */
+    padding: 5px 10px; /* Thêm khoảng cách bên trong */
+    border-radius: 6px;
+}
+
+/* Font size cho mô tả phòng */
+.room-card .card-text {
+    font-size: 1rem; /* Tăng font mô tả thông tin phòng */
+    color: #666; /* Màu chữ nhạt hơn để làm nổi bật tiêu đề */
+    margin-bottom: 10px;
+}
+
+/* Kích thước font cho thông tin giá */
+.room-card p {
+    font-size: 0.9rem; /* Kích thước nhỏ hơn cho thông tin chi tiết */
+    margin: 2px 0;
+}
+
+/* Kích thước font cho thời gian */
+.room-card .text-muted {
+    font-size: 0.85rem; /* Font nhỏ hơn cho chi tiết thời gian */
+    color: #888;
+}
+
+/* Tiêu đề của tầng */
+h3 {
+    font-size: 1.8rem; /* Tiêu đề tầng lớn hơn */
+    color: #444;
+    font-weight: bold;
+    margin-bottom: 20px;
+}

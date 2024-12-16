@@ -1,0 +1,36 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+<main class="container" style="margin-top:13rem">
+    <div>
+        <h2>Tìm kiếm của bạn</h2>
+    </div>
+    <section id="recommendations-rooms">
+        <div class="row">
+            {% for room in rooms %}
+            <div class="col-md-4 col-12 p-4">
+                <div class="room-card">
+                    <div class="room-image">
+                        <img src="{{room.image}}" alt="{{ room.name }}">
+                    </div>
+                    <div class="room-info">
+                        <h2>{{ room.name }}</h2>
+                        <p>{{ room.description }}</p>
+                        <ul>
+                            <li>👤 Sức chứa: {{ room.max_occupancy }} người</li>
+                            <li>🏠 Diện tích: {{ room.size }}m²</li>
+                            <li>💵 Giá thành viên: {{ room.room_price.price_per_night }} nghìn VNĐ/đêm</li>
+                        </ul>
+                        <div class="actions-room" styles>
+                            <button class="book-now">Đặt Ngay</button>
+                            <button class="view-more">Xem Thêm</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+</main>
+
+{% endblock %}

@@ -1,0 +1,935 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    box-sizing: border-box;
+    font-size: 62.5%;
+    color: #885230;
+}
+
+img {
+    width: 100%;
+}
+
+.flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+header {
+    position: relative;
+    height: 60vh;
+    overflow: hidden;
+}
+
+
+.header {
+    background-size: cover;
+    background-position: center;
+    width: 100%;
+}
+
+
+.anhchuyen {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: absolute;
+}
+
+.anhchuyen .list {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    display: flex;
+    width: max-content;
+    transition: left 2s;
+}
+
+.anhchuyen .list img {
+    width: 100vw;
+    height: 100%;
+    object-fit: cover;
+    overflow: hidden;
+}
+
+.anhchuyen .buttons {
+    position: absolute;
+    top: 45%;
+    left: 10%;
+    right: 30%;
+    display: flex;
+    width: 80%;
+    justify-content: space-between;
+}
+
+/*search*/
+
+.anhchuyen .buttons button {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #fff5;
+    color: black;
+    border: none;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.anhchuyen .buttons i {
+    font-size: 18px;
+}
+
+.anhchuyen .buttons button:active {
+    transform: scale(0.7);
+}
+
+.anhchuyen .dots {
+    position: absolute;
+    bottom: 1rem;
+    color: #fff;
+    left: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+
+}
+
+.dots li {
+    list-style: none;
+    width: 1rem;
+    height: 1rem;
+    background-color: gray;
+    margin: 2rem;
+    border-radius: 2rem;
+    transition: width 1s;
+}
+
+.anhchuyen .active {
+    width: 2rem;
+}
+
+
+/* header-fix & unfix */
+.headerFixed {
+    background-color: #fff;
+    position: absolute;
+    top: -6rem;
+    width: 100%;
+    padding: 0;
+    font-size: 3rem;
+    transition: top 0.5s;
+}
+
+
+.headerFixed > .menu {
+    max-width: 1200px;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+}
+
+
+.headerFixed > .menu a {
+    text-decoration: none;
+}
+
+.headerUnFixed {
+    position: absolute;
+    top: 3rem;
+    width: 100%;
+    padding: 0;
+    font-size: 3rem;
+    z-index: 1;
+    transition: top 0.9s;
+}
+
+.headerUnFixed > .menu {
+    position: relative;
+    max-width: 1200px;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+}
+
+.header-sticky {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 5rem;
+    width: 100%;
+    font-size: 3rem;
+    margin: 0 auto;
+    z-index: 999;
+
+}
+
+.header-sticky .headerFixed {
+    top: 0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+
+}
+
+.header-sticky .headerUnFixed {
+    top: -5.4rem;
+}
+
+.header-mobile {
+    display: none;
+}
+
+/*
+
+Search
+
+*/
+.search-form-horizontal {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 15px;
+    max-width: 100%;
+    overflow-x: auto;
+    flex-shrink: 0;
+}
+
+.search-form-horizontal .form-group {
+    position: relative;
+    flex: 1;
+    min-width: 120px;
+}
+
+.search-form-horizontal .form-placeholder {
+    position: absolute;
+    top: -10px;
+    left: 10px;
+    font-size: 12px;
+    background: #f8f9fa;
+    padding: 0 5px;
+    color: #6c757d;
+}
+
+.search-form-horizontal .form-control {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ced4da;
+    border-radius: 10px;
+}
+
+.search-form-horizontal button.btn-search {
+    flex-shrink: 0;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #885230;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+
+.search-form-horizontal button.btn-search:hover {
+    background-color: #5C3228;
+    color: #fff;
+}
+
+
+/*login*/
+/*login*/
+/*login*/
+
+.login-container {
+    margin: 15rem auto;
+    background: white;
+    padding: 20px 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 30%;
+}
+
+.login-container h1 {
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+.input-group {
+    margin-bottom: 15px;
+    text-align: left;
+
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #555;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.actions {
+    margin-top: 20px;
+
+}
+
+.actions button {
+    width: 100%;
+    padding: 10px;
+    background: #885230;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+}
+
+.actions button:hover {
+    background: #5C3228;
+}
+
+.actions a {
+    display: block;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #885230;
+    text-decoration: none;
+}
+
+.actions a:hover {
+    text-decoration: underline;
+}
+
+/*
+Notification
+*/
+
+.flash-messages {
+    margin-bottom: 20px;
+}
+
+.flash-message {
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.flash-message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.flash-message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+
+/*Register*/
+/*Register*/
+/*Register*/
+.checkbox-group {
+    margin-top: 10px;
+    flex-wrap: nowrap;
+}
+
+
+.checkbox-group label {
+    font-size: 14px;
+    color: #555;
+}
+
+.checkbox-group a {
+    color: #2980b9;
+    text-decoration: none;
+}
+
+.checkbox-group a:hover {
+    text-decoration: underline;
+}
+
+.input-group input[type="file"] {
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+input#terms {
+    display: inline-block;
+    width: 4rem;
+    height: 1.5rem;
+}
+
+
+/* Nav */
+.menu .logo {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+}
+
+.menu .logo-img {
+    width: 5.4rem;
+    height: 5.4rem;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+}
+
+.menu .logo-img:hover {
+    opacity: 0.2;
+}
+
+.menu > .logo-img > img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.menu > div.logo {
+    margin: 0;
+    padding: 0;
+}
+
+.menu > div.logo a {
+    text-decoration: none;
+    color: #885230;
+    border: none;
+    font-size: 3rem;
+}
+
+.menu > div.logo :hover {
+    opacity: 0.7;
+}
+
+.menu > ul {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+
+}
+
+.menu > ul > li {
+    list-style-type: none;
+    margin-left: 0.7rem;
+    padding: 0;
+    line-height: 2.4rem;
+}
+
+.menu > ul > li > a {
+    text-decoration: none;
+    color: #885230;
+    font-size: 1.8rem;
+    font-weight: 600;
+    padding: 1.5rem;
+    display: block;
+    transition: all 0.3s ease;
+}
+
+
+.menu > ul > li.menu_about {
+    position: relative;
+}
+
+.menu > ul > li > ul.About_us {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: none;
+    position: absolute;
+    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.6);
+
+}
+
+nav ul > li#Home {
+    overflow: hidden;
+}
+
+li.menu_about:hover ul.About_us {
+    display: block;
+
+}
+
+.menu > ul > li > ul.About_us > li > a {
+    text-decoration: none;
+    color: gray;
+    font-size: 1.8rem;
+    font-weight: 550;
+    text-align: left;
+    background: rgba(230, 230, 255, 0.6);
+    display: block;
+    padding: 1rem 3rem;
+    transition: all 0.3s ease;
+}
+
+.menu > ul > li > ul.About_us > li :hover {
+    color: brown;
+    background: rgba(230, 230, 255, 0.9);
+}
+
+.menu > ul > li img.rounded-circle {
+    border-radius: 50%;
+    width: 25px; /* Đảm bảo kích thước hình ảnh */
+    height: 25px; /* Giữ hình ảnh cân đối */
+    margin-left: 1rem;
+    vertical-align: middle; /* Canh giữa hình ảnh với chữ */
+}
+
+.menu > ul > li i {
+    font-size: 1.8rem;
+}
+
+.menu > ul > li:first-child > a {
+    background: rgba(230, 230, 255, 0.6);
+    color: #5C3228;
+}
+
+.headerFixed ul li.home {
+    overflow: hidden;
+}
+
+.menu > ul > li:first-child > a:hover {
+    transform: scale(1.2);
+}
+
+.menu > ul > li > a:hover {
+    background: rgba(230, 230, 255, 0.6);
+    color: red;
+}
+
+.menu > ul > li:last-child > a:hover {
+    transform: scale(1.2);
+    background: none;
+}
+
+/* Responsive for small screens */
+
+@media only screen and (max-width: 63.9375em) {
+    .headerUnFixed, .headerUnFixed {
+        display: none;
+    }
+
+    .header-sticky {
+        display: none;
+    }
+
+    .headerUnFixed > .menu,
+    .headerFixed > .menu,
+    .header-mobile > .menu {
+        display: none;
+    }
+
+
+    .header-mobile {
+        background-color: #fff;
+        position: relative;
+        width: 100%;
+        padding: 0;
+        font-size: 3rem;
+    }
+
+    .header-mobile .menu .logo a {
+        color: gray
+    }
+
+    .header-mobile > .menu {
+        position: relative;
+        max-width: 1200px;
+        margin: auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 2rem;
+    }
+
+
+    .header-mobile > .menu a {
+        text-decoration: none;
+    }
+
+    .header-mobile {
+        position: fixed;
+        display: block;
+        z-index: 999;
+        padding: 3.5rem;
+        top: 0;
+        width: 100vw;
+        box-shadow: 0 0 1rem rgba(0, 0, 0, 0.6);
+    }
+
+    div.menu-mobile {
+        display: block;
+    }
+
+    div.menu-mobile > i {
+        font-size: 2.5rem;
+        padding: 1.5rem;
+        color: gray;
+    }
+
+    .header-mobile ul.menu-mobile {
+        position: fixed;
+        top: 12rem;
+        left: 0;
+        right: 100%;
+        bottom: 0;
+        flex-direction: column;
+        background: #FFF;
+        transition: all .5s;
+        overflow: hidden;
+        opacity: 0;
+    }
+
+    .header-mobile ul {
+        display: flex;
+        align-items: center;
+        justify-content: start;
+        overflow: unset;
+    }
+
+    .menu > ul.menu-mobile > li {
+        width: 100%;
+        text-align: center;
+        line-height: 4;
+    }
+
+    .menu > ul > li > ul.About_us {
+        width: 100%;
+    }
+
+    .menu > ul > li > ul.About_us > li a {
+        text-align: center;
+        background: #bfbcb2;
+        font-size: 2rem;
+    }
+
+    .header-mobile ul.show {
+        right: 0 !important;
+        opacity: 1 !important;
+    }
+
+}
+
+
+.form {
+    margin: auto;
+}
+
+
+.input-group {
+    display: flex;
+    align-items: center;
+    /*border-right: 1px solid #ddd;*/
+    padding: 0 10px;
+}
+
+.input-group:last-child {
+    border-right: none;
+}
+
+.icon {
+    font-size: 16px;
+    margin-right: 8px;
+}
+
+input {
+    border: none;
+    outline: none;
+    font-size: 14px;
+    width: 200px;
+}
+
+input[readonly] {
+    cursor: pointer;
+}
+
+.search-btn {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 20px;
+    cursor: pointer;
+    margin-left: 10px;
+    font-size: 14px;
+}
+
+.search-btn:hover {
+    background-color: #0056b3;
+}
+
+
+.search-nearly {
+    margin: auto;
+
+}
+
+body h2 {
+
+    font-size: 26px;
+    color: #5C3228;
+}
+
+
+#recommendations-rooms {
+    margin: 4rem auto auto 0;
+    height: 1000px;
+}
+
+
+/*
+
+Rooms
+
+*/
+.rooms {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.room-card {
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    width: auto;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s, box-shadow 0.3s;
+
+}
+
+.room-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.room-image img {
+    width: 100%;
+    height: 27.5rem;
+}
+
+.room-info {
+    padding: 20px;
+}
+
+.room-info h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.room-info p {
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.room-info ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.room-info ul li {
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #333;
+}
+
+.actions-room {
+    display: flex;
+    gap: 2rem;
+}
+
+.actions-room button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.actions-room > form {
+    flex: 1;
+}
+
+.actions-room .book-now, .actions-room .confirm-booking {
+    background-color: #885230;
+    color: #fff;
+}
+
+
+.actions-room .view-more, .actions-room .exit-booking {
+    background-color: #eee;
+    color: #885230;
+}
+
+.actions-room .book-now:hover,
+.actions-room .confirm-booking:hover {
+    color: #fff;
+    background-color: #5C3228;
+}
+
+.actions-room .view-more:hover,
+.actions-room .exit-booking:hover {
+    background-color: #5C3228;
+    color: #fff;
+}
+
+/*
+
+Book-room
+
+*/
+.booking-container {
+    margin: 15rem auto;
+    max-width: 800px;
+    padding: 20px 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.booking-container h2 {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #885230;
+}
+
+.card-header {
+    background-color: #a08679;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+}
+
+.form-label {
+    font-weight: bold;
+}
+
+/*
+
+Confirm booking
+
+*/
+
+/* Styling for the main container */
+.confirm-booking-container {
+
+    margin: 0 auto;
+    padding: 4rem 21rem;
+    background-color: #f8f4f1; /* Nền màu kem nhạt */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-size: 1.6rem; /* Font-size mặc định cho nội dung */
+
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Styling for the heading */
+.confirm-booking-container h1 {
+    color: #885230; /* Màu nâu chủ đạo */
+    font-size: 2.8rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-weight: bold;
+
+}
+
+/* Styling for the subheading */
+.confirm-booking-container h3 {
+    color: #6c4f3d; /* Màu nâu đậm hơn để tạo điểm nhấn */
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #885230; /* Đường viền nhấn */
+    display: inline-block;
+}
+
+/* Styling for the paragraph */
+.confirm-booking-container p {
+    color: #4e3629; /* Màu nâu nhạt hơn */
+    font-size: 1.6rem;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+/* Styling for the list */
+.confirm-booking-container ul {
+    list-style: none;
+    padding: 0;
+}
+
+.confirm-booking-container ul li {
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+    color: #4e3629; /* Màu nâu nhạt */
+}
+
+.confirm-booking-container ul li strong {
+    color: #885230; /* Màu nâu chủ đạo */
+}
+
+.confirm-booking-container ul li:hover {
+    background-color: #f1f1f1;
+    transform: translate(0, -0.4rem);
+    border-radius: 0.4rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container {
+        padding: 1.5rem;
+    }
+
+    .confirm-booking-container h1 {
+        font-size: 2.4rem;
+    }
+
+    .confirm-booking-container h3 {
+        font-size: 1.8rem;
+    }
+
+    .confirm-booking-container ul li {
+        font-size: 1.4rem;
+    }
+}
+

@@ -1,0 +1,63 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+<main class="container">
+    <div class="booking-container">
+        <h2 class="text-center mb-4">THÔNG TIN ĐẶT PHÒNG</h2>
+
+        <!-- Thông tin khách hàng -->
+        <div class="card mb-4">
+            <div class="card-header text-white fs-2">
+                Thông Tin Khách Hàng
+            </div>
+            <div class="card-body fs-1">
+                <p><strong>Họ Tên:</strong> {{ user.name }}</p>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>Số Điện Thoại:</strong> {{ user.phone }}</p>
+            </div>
+        </div>
+
+        <!-- Thông tin phòng -->
+        <div class="card mb-4">
+            <div class="card-header text-white fs-2">
+                Thông Tin Phòng
+            </div>
+            <div class="card-body fs-1">
+                <p><strong>Mã Phòng:</strong> {{ room.id }}</p>
+                <p><strong>Tên Phòng:</strong> {{ room.name }}</p>
+                <p><strong>Loại Phòng:</strong> {{ room.room_type.name }}</p>
+                <p><strong>Giá:</strong> {{ room.room_price.price_per_night }}/Đêm</p>
+                <p><strong>User:</strong> {{ user.id }}</p>
+            </div>
+        </div>
+
+        <!-- Form xác nhận đặt phòng -->
+        <form action="/confirm-booking" method="POST">
+            <input type="hidden" name="room_id" value="{{ room.id }}">
+            <input type="hidden" name="user_id" value="{{ user.id }}">
+
+            <div class="mb-3">
+                <label for="start_day" class="form-label fs-6">Ngày Bắt Đầu</label>
+                <input type="date" class="form-control" id="start_day" name="start_day" value="{{today}}" required
+                       readonly>
+            </div>
+
+            <div class="mb-3">
+                <label for="checkin" class="form-label fs-6">Thời Gian Check-In</label>
+                <input type="datetime-local" class="form-control" id="checkin" name="checkin" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="checkout" class="form-label fs-6">Thời Gian Check-Out</label>
+                <input type="datetime-local" class="form-control" id="checkout" name="checkout" required>
+            </div>
+            <div class="actions-room" styles>
+                <button type="submit" class="exit-booking">Thoát Đặt Phòng</button>
+                <button type="submit" class="confirm-booking">Xác Nhận Đặt Phòng</button>
+            </div>
+
+        </form>
+    </div>
+</main>
+
+{% endblock %}

@@ -1,0 +1,132 @@
+<div class="header">
+    <nav class="headerFixed">
+        <div class="menu">
+            <div class="logo">
+                <div class="logo-img">
+                    <img src="/static/image/LuxuryHotel.png" alt="">
+                </div>
+                <div class="logo-text">
+                    <a href="#">Luxury Hotel</a>
+                </div>
+            </div>
+            <ul>
+                <li id="Home"><a href="/">
+                    <i class="ti-home"></i>
+                    Home
+                </a></li>
+                <li class="menu_about">
+                    <a href="#">About us</a>
+                    <ul class="About_us">
+                        <li><a href="#">Facebook</a></li>
+                        <li><a href="#">Tiktok</a></li>
+                        <li><a href="#">Instagram</a></li>
+                        <li><a href="#">Youtube</a></li>
+                        <li><a href="#">Twiter</a></li>
+                    </ul>
+                </li>
+                {% if current_user.is_authenticated %}
+
+                <li class="flex">
+                    <img src="https://top10tphcm.com/wp-content/uploads/2023/02/gai-dep-nhat-viet-nam-3.jpg"
+                         class="rounded-circle"/>
+                    <a href="/">Chào {{ current_user.username }}</a>
+                </li>
+                <li><a href="/logout">Đăng xuất</a></li>
+                {% else %}
+                <li><a href="login">Log in</a></li>
+                <li><a href="register">Register</a></li>
+                {% endif %}
+
+                <li><a href=""><i class="ti-search"></i></a></li>
+            </ul>
+        </div>
+    </nav>
+    <nav class="headerUnFixed">
+        <div class="menu  ">
+            <div class="logo">
+                <div class="logo-img">
+                    <img src="/static/image/LuxuryHotel.png" alt="">
+                </div>
+                <div class="logo-text">
+                    <a href="#">Luxury Hotel</a>
+                </div>
+            </div>
+            <ul>
+                <li id="Home"><a href="/">
+                    <i class="ti-home"></i>
+                    Home
+                </a></li>
+                <li class="menu_about">
+                    <a href="#">About us</a>
+                    <ul class="About_us">
+                        <li><a href="#">Facebook</a></li>
+                        <li><a href="#">Tiktok</a></li>
+                        <li><a href="#">Instagram</a></li>
+                        <li><a href="#">Youtube</a></li>
+                        <li><a href="#">Twiter</a></li>
+                    </ul>
+                </li>
+                {% if current_user.is_authenticated %}
+
+                <li class="flex">
+                    <img src="https://top10tphcm.com/wp-content/uploads/2023/02/gai-dep-nhat-viet-nam-3.jpg"
+                         width="25" class="rounded-circle"/>
+                    <a href="/">Chào {{ current_user.username }}</a>
+                </li>
+                <li><a href="/logout">Đăng xuất</a></li>
+                {% else %}
+                <li><a href="login">Log in</a></li>
+                <li><a href="register">Register</a></li>
+                {% endif %}
+                <li><a href=""><i class="ti-search"></i></a></li>
+            </ul>
+        </div>
+    </nav>
+    <nav class="header-mobile">
+        <div class="menu">
+            <div class="logo">
+                <div class="logo-img">
+                    <img src="/static/image/LuxuryHotel.png" alt="">
+                </div>
+                <div class="logo-text">
+                    <a href="#">LuxuryHotel</a>
+                </div>
+            </div>
+            <ul class="menu-mobile">
+                <li id="Home"><a href="/">
+                    <i class="ti-home"></i>
+                    Home
+                </a></li>
+                <li class="menu_about">
+                    <a href="#">About us</a>
+                    <ul class="About_us">
+                        <li><a href="#">Facebook</a></li>
+                        <li><a href="#">Tiktok</a></li>
+                        <li><a href="#">Instagram</a></li>
+                        <li><a href="#">Youtube</a></li>
+                        <li><a href="#">Twiter</a></li>
+                    </ul>
+                </li>
+                {% if current_user.is_authenticated %}
+
+                <li class="flex">
+
+                    <img src="https://top10tphcm.com/wp-content/uploads/2023/02/gai-dep-nhat-viet-nam-3.jpg"
+                         width="25" class="rounded-circle"/>
+
+                    <a href="/">Chào {{ current_user.username }}</a>
+                </li>
+                <li><a href="logout">Đăng xuất</a></li>
+                {% else %}
+                <li><a href="login">Log in</a></li>
+                <li><a href="register">Register</a></li>
+                {% endif %}
+
+                <li><a href=""><i class="ti-search"></i></a></li>
+            </ul>
+            <div class="menu-mobile">
+                <i class="ti-menu"></i>
+            </div>
+        </div>
+    </nav>
+</div>

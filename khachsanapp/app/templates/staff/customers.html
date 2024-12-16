@@ -1,0 +1,32 @@
+{% extends 'staff/layout/base.html' %}
+{% block title %}Customers Management{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Customers Management</h1>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <!-- Đây là ví dụ, bạn cần thay thế bằng dữ liệu thật -->
+        <tr>
+            <td>1</td>
+            <td>John Doe</td>
+            <td>john@example.com</td>
+            <td>123456789</td>
+            <td>
+            <td>
+                <button class="btn btn-sm btn-warning">Edit</button>
+                <button class="btn btn-sm btn-danger">Delete</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}
