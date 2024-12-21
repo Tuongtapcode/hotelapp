@@ -1,14 +1,26 @@
-from app.models import Room, RoomPrice, RoomType, RoomStatus, User, Account, Customer, AccountRole, BookingRoom
+from app.models import Room, RoomType, RoomStatus, User, Account, Customer, AccountRole, BookingRoom, hotel
 from app import app, db
 from flask_admin.contrib.sqla import ModelView
-from flask_admin import Admin, BaseView, expose
+from flask_admin import Admin, BaseView, expose, AdminIndexView
 from flask_login import current_user, logout_user
 from flask import redirect
 from wtforms.validators import DataRequired
 from wtforms import SelectField
-from wtforms_sqlalchemy.fields import QuerySelectField
+import dao
+import random
 
-admin = Admin(app=app, name='Hotel Management', template_mode='bootstrap4')
+class MyAdminIndexView(AdminIndexView):
+    @expose('/')
+    def index(self):
+        data = {
+            "available": dao.count_available_rooms(),  # Số phòng không có khách
+            "total": dao.count_room()  # Tổng số phòng
+        }
+        room_guest_counts = dao.count_guests_per_room()
+        return self.render('admin/index.html', data=data, room_guest_counts=room_guest_counts)
+
+
+admin = Admin(app=app, name='Hotel Management', template_mode='bootstrap4', index_view=MyAdminIndexView())
 
 
 class AuthenticatedView(BaseView):
@@ -21,54 +33,6 @@ class AdminView(ModelView):
         return current_user.is_authenticated and current_user.role.__eq__(AccountRole.ADMIN)
 
 
-# class RoomView(AdminView):
-#     column_list = ['id', 'name', 'max_occupancy', 'room_type_id', 'room_status_id',
-#                    'room_price_id', 'hotel_id', 'size']
-#     form_columns = ['name', 'room_type_id', 'room_status_id', 'room_price_id', 'hotel_id', 'size']
-#     can_export = True
-#     can_create = True
-#     can_edit = True
-#     can_delete = True
-#
-#     def scaffold_form(self):
-#         form_class = super().scaffold_form()
-#
-#         with app.app_context():
-#             # Sử dụng QuerySelectField với query_factory
-#             form_class.room_type_id = QuerySelectField(
-#                 'Room Type',
-#                 query_factory=lambda: RoomType.query.all(),  # Phải trả về danh sách các object
-#                 get_label='name',  # Tên thuộc tính để hiển thị
-#                 allow_blank=True  # Cho phép giá trị rỗng
-#             )
-#             form_class.room_status_id = QuerySelectField(
-#                 'Room Status',
-#                 query_factory=lambda: RoomStatus.query.all(),
-#                 get_label='name',
-#                 allow_blank=True
-#             )
-#             form_class.room_price_id = QuerySelectField(
-#                 'Room Price',
-#                 query_factory=lambda: RoomPrice.query.all(),
-#                 get_label=lambda rp: f"${rp.price_per_night:.2f}",
-#                 allow_blank=True
-#             )
-#
-#         return form_class
-
-
-class RoomView(AdminView):
-    column_list = ['id', 'name', 'max_occupancy', 'room_type.name', 'room_status.name', 'room_price.price_per_night',
-                   'hotel_id', 'size']
-    form_columns = ['name', 'max_occupancy', 'room_type', 'room_status', 'room_price', 'hotel_id', 'image', 'size']
-    can_export = True
-    can_create = True
-    can_edit = True
-    can_delete = True
-    
-
-
-
 class LogoutView(AuthenticatedView):
     @expose('/')
     def index(self):
@@ -76,29 +40,74 @@ class LogoutView(AuthenticatedView):
         return redirect('/admin')
 
 
+class RoomView(AdminView):
+    column_list = ['id', 'name', 'max_occupancy', 'room_type', 'room_status', 'size']
+    form_columns = ['id', 'name', 'max_occupancy', 'room_type', 'room_status', 'size', 'image', 'hotel']
+    can_export = True
+    can_create = True
+    can_edit = True
+    can_delete = True
+
+
 class RoomTypeView(AdminView):
-    column_list = ['name', 'rooms']  # Show name and linked rooms
-    form_columns = ['name']  # Allow admin to edit name
+    column_list = ['id', 'name', 'rooms', 'price_per_night']
+    form_columns = ['name','price_per_night' ]
+    can_edit = True
+    def _format_rooms(view, context, model, name):
+        return ', '.join([room.name for room in model.rooms]) if model.rooms else 'No rooms'
+
+    column_formatters = {
+        'rooms': _format_rooms
+    }
 
 
-class RoomPriceView(AdminView):
-    column_list = ['price_per_night', 'rooms']  # Show price and linked rooms
-    form_columns = ['price_per_night']  # Allow admin to edit price
 
-
-class UserView(AdminView):
-    column_list = ['id', 'type', 'name', 'phone']  # Show price and linked rooms
+class CustomerView(AdminView):
+    form_columns = ['name', 'phone', 'email', 'address', 'type']
 
 
 class StatsView(AuthenticatedView):
     @expose('/')
     def index(self):
-        return self.render('admin/stats.html')
+        revenue_data = [
+            {"month": "January", "revenue": random.randint(5000, 20000)},
+            {"month": "February", "revenue": random.randint(5000, 20000)},
+            {"month": "March", "revenue": random.randint(5000, 20000)},
+            {"month": "April", "revenue": random.randint(5000, 20000)},
+            {"month": "May", "revenue": random.randint(5000, 20000)},
+            {"month": "June", "revenue": random.randint(5000, 20000)},
+            {"month": "July", "revenue": random.randint(5000, 20000)},
+            {"month": "August", "revenue": random.randint(5000, 20000)},
+            {"month": "September", "revenue": random.randint(5000, 20000)},
+            {"month": "October", "revenue": random.randint(5000, 20000)},
+            {"month": "November", "revenue": random.randint(5000, 20000)},
+            {"month": "December", "revenue": random.randint(5000, 20000)},
+        ]
+
+        # Dữ liệu giả cho tần suất sử dụng loại phòng
+        usage_data = [
+            {"room_type": "Deluxe", "usage_count": random.randint(20, 50)},
+            {"room_type": "Suite", "usage_count": random.randint(10, 30)},
+            {"room_type": "Standard", "usage_count": random.randint(30, 60)},
+            {"room_type": "Family", "usage_count": random.randint(5, 15)},
+        ]
+
+        return self.render(
+            'admin/stats.html',
+            revenue_data=revenue_data,
+            usage_data=usage_data,
+        )
 
 
-admin.add_view(RoomPriceView(RoomPrice, db.session, name='Room Prices'))
-admin.add_view(RoomTypeView(RoomType, db.session, name='Room Types'))
-admin.add_view(UserView(User, db.session, name='User'))
 admin.add_view(RoomView(Room, db.session, name='Rooms'))
+admin.add_view(RoomTypeView(RoomType, db.session, name='Room Types'))
+admin.add_view(CustomerView(Customer, db.session, name='Customer'))
+
 admin.add_view(StatsView(name='Statistical'))
 admin.add_view(LogoutView(name='Logout'))
+
+# if __name__ == '__main__':
+#     with app.app_context():
+#         room_type = RoomType.query.first()
+#         print(type(room_type.rooms))  # Kiểm tra kiểu dữ liệu
+#         print(room_type.rooms)  # Xem dữ liệu cụ thể

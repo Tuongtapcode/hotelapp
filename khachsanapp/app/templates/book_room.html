@@ -26,7 +26,7 @@
                 <p><strong>Mã Phòng:</strong> {{ room.id }}</p>
                 <p><strong>Tên Phòng:</strong> {{ room.name }}</p>
                 <p><strong>Loại Phòng:</strong> {{ room.room_type.name }}</p>
-                <p><strong>Giá:</strong> {{ room.room_price.price_per_night }}/Đêm</p>
+                <p><strong>Giá:</strong> /Đêm</p>
                 <p><strong>User:</strong> {{ user.id }}</p>
             </div>
         </div>
@@ -51,9 +51,9 @@
                 <label for="checkout" class="form-label fs-6">Thời Gian Check-Out</label>
                 <input type="datetime-local" class="form-control" id="checkout" name="checkout" required>
             </div>
-            <div class="actions-room" styles>
-                <button type="submit" class="exit-booking">Thoát Đặt Phòng</button>
-                <button type="submit" class="confirm-booking">Xác Nhận Đặt Phòng</button>
+            <div class="actions-room">
+                <button type="submit" name="action" value="exit" class="exit-booking">Thoát Đặt Phòng</button>
+                <button type="submit" name="action" value="confirm" class="confirm-booking">Xác Nhận Đặt Phòng</button>
             </div>
 
         </form>

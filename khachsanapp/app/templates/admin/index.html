@@ -1,9 +1,153 @@
 {% extends 'admin/master.html' %}
 
 {% block body %}
+
+
 {% if current_user.is_authenticated %}
-<h1 class="text-primary">CHÀO MỪNG ĐẾN TRANG QUẢN TRỊ!!!</h1>
-<h2 class="text-secondary">Chào {{ current_user.username }}</h2>
+ <style>
+    #welcomeMessage {
+        opacity: 0; /* Ban đầu ẩn */
+        transform: translateY(-20px); /* Trượt lên */
+        max-height: 0; /* Chiều cao ban đầu là 0 */
+        overflow: hidden; /* Ẩn nội dung thừa */
+        transition: transform 1s ease, opacity 1s ease, max-height 1s ease; /* Hiệu ứng trượt, mờ và chiều cao */
+    }
+    #welcomeMessage.visible {
+        display: block; /* Hiển thị lại phần tử */
+        opacity: 1; /* Hiện rõ */
+        transform: translateY(0); /* Vị trí ban đầu */
+        max-height: 100px; /* Đặt chiều cao phù hợp */
+    }
+    #welcomeMessage.hidden {
+        opacity: 0; /* Mờ dần */
+        transform: translateY(-20px); /* Trượt lên */
+        max-height: 0; /* Thu nhỏ chiều cao về 0 */
+        pointer-events: none; /* Ngăn người dùng tương tác */
+    }
+    .timeline {
+      position: relative;
+      padding-left: 25px;
+    }
+    .timeline::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 10px;
+      width: 2px;
+      height: 100%;
+      background-color: gray;
+    }
+    .timeline-item {
+      position: relative;
+      margin-bottom: 20px;
+      padding-left: 15px;
+    }
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      top: 5px;
+      left: -20px;
+      width: 10px;
+      height: 10px;
+      background-color: gray;
+      border-radius: 50%;
+    }
+    .icon {
+      color: #007bff;
+      margin-right: 10px;
+    }
+  </style>
+<div class="container">
+    <div class="mb-4 "id="welcomeMessage" >
+    <h1 class="text-primary">Dashboard - Admin</h1>
+    <h2 class="text-secondary">Chào mừng {{ current_user.username }} đến với giao diện quản lý!</h2>
+</div>
+
+
+<div class="row">
+    <div class="col-md-9 text-white p-3 ">
+        <div class="row">
+            <div class="col-md-5 mb-4">
+                <h3 class="text-center m-auto text-secondary h6">Công suất phòng hiện tại</h3>
+                <canvas id="roomCapacityChart"></canvas>
+
+            </div>
+            <div class="col-md-7 mb-4">
+                <h2>Room Guest Counts</h2>
+                <table class="table table-bordered table-striped">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th>Room Name</th>
+                        <th>Number of Guests</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for room in data.room_guest_counts %}
+                    <tr>
+                        <td>{{ room.room_name }}</td>
+                        <td>{{ room.guest_count }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-5 mb-4">
+                <canvas id="usageChart"></canvas>
+            </div>
+            <div class="col-md-7 mb-4">
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 bg-light p-3">
+    <!-- Khu vực 25% -->
+        <h5 class="fw-bold h6">CÁC HOẠT ĐỘNG GẦN ĐÂY</h5>
+        <div class="timeline">
+          <!-- Hoạt động 1 -->
+          <div class="timeline-item">
+            <i class="icon bi bi-clipboard"></i>
+            <strong>Hoàng Long</strong> vừa tạo hóa đơn với<br>
+            giá trị <strong>8,678,000</strong><br>
+            <small class="text-muted">4 ngày trước</small>
+          </div>
+          <!-- Hoạt động 2 -->
+          <div class="timeline-item">
+            <i class="icon bi bi-clipboard"></i>
+            <strong>Nguyễn Văn A</strong> vừa tạo hóa đơn với<br>
+            giá trị <strong>13,570,000</strong><br>
+            <small class="text-muted">4 ngày trước</small>
+          </div>
+          <!-- Hoạt động 3 -->
+          <div class="timeline-item">
+            <i class="icon bi bi-clipboard"></i>
+            <strong>Hoàng Long</strong> vừa tạo hóa đơn với<br>
+            giá trị <strong>9,843,000</strong><br>
+            <small class="text-muted">4 ngày trước</small>
+          </div>
+          <!-- Hoạt động 4 -->
+          <div class="timeline-item">
+            <i class="icon bi bi-clipboard"></i>
+            <strong>Hoàng Long</strong> vừa tạo hóa đơn với<br>
+            giá trị <strong>179,000,000</strong><br>
+            <small class="text-muted">4 ngày trước</small>
+          </div>
+          <!-- Hoạt động 5 -->
+          <div class="timeline-item">
+            <i class="icon bi bi-clipboard"></i>
+            <strong>Nguyễn Văn A</strong> vừa tạo hóa đơn với<br>
+            giá trị <strong>2,698,000</strong><br>
+            <small class="text-muted">4 ngày trước</small>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+</div>
+
+
+
 {% else %}
 <h2 class="text-success text-center mt-1">ĐĂNG NHẬP QUẢN TRỊ</h2>
 <form method="post" action="/login-admin">
@@ -22,4 +166,106 @@
     </div>
 </form>
 {% endif %}
+<!-- Thư viện Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Dữ liệu công suất phòng
+    const roomCapacityData = {
+        datasets: [{
+            data: [{{ data['total'] | default(0) - data['available'] | default(0) }},
+                   {{ data['available'] | default(0) }}],
+            backgroundColor: ['#4caf50', '#ff9800'],
+        }],
+        labels: ['Đang có khách', 'Đang trống'],
+    };
+
+    // Vẽ biểu đồ doughnut công suất phòng
+    const ctxRoomCapacity = document.getElementById('roomCapacityChart').getContext('2d');
+    new Chart(ctxRoomCapacity, {
+        type: 'doughnut',
+        data: roomCapacityData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+            },
+        },
+    });
+
+    // Biểu đồ doanh thu
+    const revenueData = {
+        labels: ['Phòng đơn', 'Phòng đôi', 'Phòng VIP'],
+        datasets: [{
+            label: 'Doanh thu (VND)',
+            data: [12000000, 18000000, 30000000], // Thay bằng dữ liệu thực nếu có
+            backgroundColor: ['#ff6384', '#36a2eb', '#cc65fe'],
+        }],
+    };
+
+    // Dữ liệu và biểu đồ line công suất phòng (usageChart)
+    const usageData = {
+        labels: ['12', '13', '14', '15', '16', '17', '18', '19', '20'], // Thay bằng dữ liệu thực nếu có
+        datasets: [{
+            label: 'Công suất phòng (%)',
+            data: [10, 20, 40, 50, 60, 80, 90, 70, 50], // Thay bằng dữ liệu thực nếu có
+            borderColor: 'rgba(75, 192, 192, 1)',
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            tension: 0.4,
+        }],
+    };
+
+    const ctxUsage = document.getElementById('usageChart').getContext('2d');
+    new Chart(ctxUsage, {
+        type: 'line',
+        data: usageData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Công suất (%)'
+                    },
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Ngày',
+                    },
+                },
+            },
+        },
+    });
+ document.addEventListener("DOMContentLoaded", function () {
+        const welcomeMessage = document.getElementById("welcomeMessage");
+
+        // Hiển thị thông báo với hiệu ứng
+        if (welcomeMessage) {
+            setTimeout(function () {
+                welcomeMessage.style.display = "block"; // Hiển thị phần tử
+                welcomeMessage.classList.add("visible"); // Thêm class 'visible' để hiện hiệu ứng
+            }, 100); // Đợi 500ms sau khi tải trang
+
+            // Ẩn thông báo sau 5 giây
+            setTimeout(function () {
+                welcomeMessage.classList.remove("visible");
+                welcomeMessage.classList.add("hidden"); // Thêm class 'hidden' để kích hoạt hiệu ứng ẩn
+            }, 3500); // 5 giây + 500ms
+
+            // Đặt display: none sau khi hiệu ứng kết thúc
+            setTimeout(function () {
+                welcomeMessage.style.display = "none"; // Ẩn hoàn toàn phần tử
+            }, 4100); // Thời gian hiệu ứng (1 giây) + ẩn
+        }
+    });
+</script>
+
 {% endblock %}

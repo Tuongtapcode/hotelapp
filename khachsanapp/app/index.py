@@ -45,6 +45,18 @@ def login_admin_process():
     return redirect('/admin')
 
 
+@app.route("/login-staff", methods=['post'])
+def login_staff_process():
+    username = request.form.get('username')
+    password = request.form.get('password')
+
+    u = dao.auth_account(username=username, password=password, role=AccountRole.STAFF)
+    if u:
+        login_user(u)
+
+    return redirect('/staff/dashboard')
+
+
 @app.route("/logout")
 def logout_process():
     logout_user()
@@ -63,6 +75,8 @@ def register_process():
         confirm_password = request.form.get('confirm-password')
         terms = request.form.get('terms')
 
+        identification_number = request.form.get('identifier')
+        nationality = request.form.get('nationality')
         if password != confirm_password:
             flash('You must accept the terms and conditions!', 'error')
             return render_template('register.html')
@@ -78,7 +92,7 @@ def register_process():
             flash(f"Email '{email}' is already registered! Please use another.", 'error')
             return render_template('register.html')
 
-        if dao.add_user_account(full_name, email, username, password):
+        if dao.add_user_account(full_name, email, username, password, identification_number, nationality):
             flash('Registration successful! You can now login.', 'success')
             return redirect('/login')
 
@@ -90,8 +104,7 @@ def search():
     room_type_id = request.args.get("room_type_id")
     max_occupancy = request.args.get('max_occupancy', type=int)
     max_occupancy = request.args.get('max_occupancy', type=int)
-    room_price = request.args.get('price', type=float)
-    rooms = dao.search_rooms_direct(room_type_id, max_occupancy, room_price, 1, None)
+    rooms = dao.search_rooms_direct(room_type_id, max_occupancy, 1, None)
     return render_template('rooms.html', rooms=rooms)
 
 
@@ -110,9 +123,18 @@ def book_room():
     return render_template('book_room.html', room=room, user=user, today=today)
 
 
+@app.route('/exit-booking', methods=['POST'])
+def exit_booking():
+    # Điều hướng về trang chủ
+    return redirect('/')
+
+
 @app.route('/confirm-booking', methods=['POST'])
 def confirm_booking():
     # Lấy dữ liệu từ form
+    action = request.form.get('action')
+    if action == "exit":
+        return redirect("/")
     room_id = request.form.get('room_id')
     user_id = request.form.get('user_id')
     checkin_str = request.form.get('checkin')
@@ -121,10 +143,9 @@ def confirm_booking():
     checkin = datetime.strptime(checkin_str, '%Y-%m-%dT%H:%M')
     checkout = datetime.strptime(checkout_str, '%Y-%m-%dT%H:%M')
     # Kiểm tra phòng và người dùng
-    room = Room.query.get(room_id)
+    room = dao.get_room_by_id(room_id)
     customer = Customer.query.get(user_id)
-    booking = dao.create_booking(room, None, customer, checkin, checkout)
-    flash('Đặt phòng thành công!', 'success')
+    booking = dao.book_room(room, None, customer, checkin, checkout)
     return render_template('confirm-booking.html', booking=booking, room=room, customer=customer)
 
 

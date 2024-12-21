@@ -1,38 +1,87 @@
 {% extends 'admin/master.html' %}
 
 {% block body %}
-<h1 class="text-center text-danger mt-1">THÔNG KÊ BÁO CÁO</h1>
+<div class="container mt-4">
+    <h1 class="mb-4">Statistics</h1>
 
-<div class="row">
-    <div class="col-md-7 col-12"></div>
-    <div class="col-md-5 col-12">
-        <canvas id="myChart"></canvas>
+    <!-- Biểu đồ doanh thu -->
+    <div class="mb-5">
+        <h3>Monthly Revenue</h3>
+        <canvas id="revenueChart"></canvas>
+    </div>
+
+    <!-- Biểu đồ tần suất sử dụng phòng -->
+    <div>
+        <h3>Room Usage Frequency</h3>
+        <canvas id="usageChart"></canvas>
     </div>
 </div>
 
+<!-- Tải thư viện Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    window.onload = function () {
-        const ctx = document.getElementById('myChart');
+    // Dữ liệu doanh thu
+    const revenueLabels = {{ revenue_data | map(attribute='month') | list | tojson }};
+    const revenueData = {{ revenue_data | map(attribute='revenue') | list | tojson }};
 
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-                datasets: [{
-                    label: '# of Votes',
-                    data: [12, 19, 3, 5, 2, 3],
-                    borderWidth: 1
-                }]
+    // Tạo biểu đồ doanh thu
+    const revenueChart = new Chart(document.getElementById('revenueChart'), {
+        type: 'bar',
+        data: {
+            labels: revenueLabels,
+            datasets: [{
+                label: 'Revenue',
+                data: revenueData,
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' }
             },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
+            scales: {
+                y: { beginAtZero: true }
             }
-        });
-    }
+        }
+    });
+
+    // Dữ liệu tần suất sử dụng phòng
+    const usageLabels = {{ usage_data | map(attribute='room_type') | list | tojson }};
+    const usageData = {{ usage_data | map(attribute='usage_count') | list | tojson }};
+
+    // Tạo biểu đồ tần suất sử dụng phòng
+    const usageChart = new Chart(document.getElementById('usageChart'), {
+        type: 'pie',
+        data: {
+            labels: usageLabels,
+            datasets: [{
+                label: 'Usage Frequency',
+                data: usageData,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' }
+            }
+        }
+    });
 </script>
+
 {% endblock %}

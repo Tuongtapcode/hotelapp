@@ -19,23 +19,43 @@
         <form method="post" action="register">
             <div class="input-group">
                 <label for="name">Full name</label>
-                <input type="name" id="name" name="name" required>
+                <input type="name" id="name" name="name" required placeholder="Full name">
             </div>
             <div class="input-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" required>
+                <input type="email" id="email" name="email" required placeholder="Email">
+            </div>
+            <div class="input-group">
+                <label for="nationality">Nationality</label>
+                <input list="nationality-options" id="nationality" name="nationality"
+                       placeholder="Choose or type your nationality" required>
+                <datalist id="nationality-options">
+                    <option value="Vietnam">
+                    <option value="USA">
+                    <option value="United Kingdom">
+                    <option value="Japan">
+                    <option value="Other">
+                </datalist>
+            </div>
+            <div class="input-group">
+                <label for="identifier">Identification Number</label>
+                <input type="text" id="identifier" name="identifier" placeholder="Enter ID card/passport number"
+                       required>
             </div>
             <div class="input-group">
                 <label for="username">Username</label>
-                <input type="text" id="username" name="username" required>
+                <input type="text" id="username" name="username" required placeholder='Username'>
             </div>
+
             <div class="input-group">
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
+                <input type="password" id="password" name="password" required placeholder="Password">
             </div>
+
             <div class="input-group">
                 <label for="confirm-password">Confirm Password</label>
-                <input type="password" id="confirm-password" name="confirm-password" required>
+                <input type="password" id="confirm-password" name="confirm-password" required
+                       placeholder="Confirm Password">
             </div>
             <!--            <div class="input-group">-->
             <!--                <label for="avatar">Upload Avatar</label>-->

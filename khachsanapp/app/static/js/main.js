@@ -1,3 +1,7 @@
+
+
+
+
 window.onscroll = function () {
     var header = document.querySelector(".header");
     var headerOffset = header.offsetTop;

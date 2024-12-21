@@ -9,12 +9,15 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/staff/dashboard">Home</a>
                 </li>
+                {% if current_user.is_authenticated %}
                 <li class="nav-item">
                     <a class="nav-link" href="rooms">Rooms</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="customers">Customers</a>
                 </li>
+                {% else %}
+                {% endif %}
             </ul>
         </div>
     </div>
