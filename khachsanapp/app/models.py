@@ -1,6 +1,6 @@
 from email.mime import image
 import hashlib
-from sqlalchemy import Column, Integer, String, ForeignKey, Float, DateTime, Enum
+from sqlalchemy import Table,Column, Integer, String, ForeignKey, Float, DateTime, Enum
 from sqlalchemy.orm import relationship, backref
 from app import app, db
 from enum import Enum as RoleEnum
@@ -111,6 +111,28 @@ class Room(db.Model):
         return self.name or "Unnamed Room"
 
 
+booking_room_coefficient = Table(
+    'booking_room_coefficient',
+    db.metadata,
+    Column('coefficient_id', Integer, ForeignKey('coefficient.id'), primary_key=True),
+    Column('booking_room_id', Integer, ForeignKey('booking_room.id'), primary_key=True)
+)
+
+
+class Coefficient(db.Model):
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(50), unique=True, nullable=False)  # Tên hệ số
+    description = Column(String(255), nullable=True)  # Mô tả
+    booking_rooms = relationship(
+        'BookingRoom',
+        secondary=booking_room_coefficient,
+        back_populates='coefficients'
+    )
+
+    def __repr__(self):
+        return f"<Coefficient(id={self.id}, name='{self.name}')>"
+
+
 class BookingRoom(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     start_day = Column(DateTime, nullable=False, default=datetime.now())
@@ -121,6 +143,11 @@ class BookingRoom(db.Model):
     customer_id = Column(Integer, ForeignKey('customer.id'), nullable=False)
     bill = relationship("Bill", back_populates="booking_room", uselist=False)
     booking_status_id = Column(Integer, ForeignKey('booking_status.id'), nullable=False, default=1)
+    coefficients = relationship(
+        'Coefficient',
+        secondary='booking_room_coefficient',
+        back_populates='booking_rooms'
+    )
 
 
 class Bill(db.Model):
@@ -243,7 +270,6 @@ rooms = [
         size=30
     )
 ]
-
 
 room_types = [
     RoomType(name="Deluxe", price_per_night=150.0),

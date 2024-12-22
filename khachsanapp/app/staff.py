@@ -50,6 +50,7 @@ def checkin_room():
     room_id = data.get('room_id')  # Lấy room_id từ JSON
     room = dao.get_room_by_id(room_id)
 
+
     if room and room.room_status.name == "Booked":
         dao.update_room_status(room_id, "Checked")
         return jsonify({'success': True, 'message': 'Phòng đã được nhận (Check-in).'})

@@ -3,11 +3,13 @@ from app import app, db
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import Admin, BaseView, expose, AdminIndexView
 from flask_login import current_user, logout_user
-from flask import redirect
+from flask import redirect, request
 from wtforms.validators import DataRequired
 from wtforms import SelectField
 import dao
 import random
+from datetime import datetime
+
 
 class MyAdminIndexView(AdminIndexView):
     @expose('/')
@@ -17,7 +19,10 @@ class MyAdminIndexView(AdminIndexView):
             "total": dao.count_room()  # Tổng số phòng
         }
         room_guest_counts = dao.count_guests_per_room()
-        return self.render('admin/index.html', data=data, room_guest_counts=room_guest_counts)
+    # Lấy 5 hóa đơn gần nhất
+        bill_recent_activities = dao.bill_recent_activities()
+        return self.render('admin/index.html', data=data, room_guest_counts=room_guest_counts,
+                           bill_recent_activities=bill_recent_activities)
 
 
 admin = Admin(app=app, name='Hotel Management', template_mode='bootstrap4', index_view=MyAdminIndexView())
@@ -51,15 +56,15 @@ class RoomView(AdminView):
 
 class RoomTypeView(AdminView):
     column_list = ['id', 'name', 'rooms', 'price_per_night']
-    form_columns = ['name','price_per_night' ]
+    form_columns = ['name', 'price_per_night']
     can_edit = True
+
     def _format_rooms(view, context, model, name):
         return ', '.join([room.name for room in model.rooms]) if model.rooms else 'No rooms'
 
     column_formatters = {
         'rooms': _format_rooms
     }
-
 
 
 class CustomerView(AdminView):
@@ -69,33 +74,19 @@ class CustomerView(AdminView):
 class StatsView(AuthenticatedView):
     @expose('/')
     def index(self):
-        revenue_data = [
-            {"month": "January", "revenue": random.randint(5000, 20000)},
-            {"month": "February", "revenue": random.randint(5000, 20000)},
-            {"month": "March", "revenue": random.randint(5000, 20000)},
-            {"month": "April", "revenue": random.randint(5000, 20000)},
-            {"month": "May", "revenue": random.randint(5000, 20000)},
-            {"month": "June", "revenue": random.randint(5000, 20000)},
-            {"month": "July", "revenue": random.randint(5000, 20000)},
-            {"month": "August", "revenue": random.randint(5000, 20000)},
-            {"month": "September", "revenue": random.randint(5000, 20000)},
-            {"month": "October", "revenue": random.randint(5000, 20000)},
-            {"month": "November", "revenue": random.randint(5000, 20000)},
-            {"month": "December", "revenue": random.randint(5000, 20000)},
-        ]
-
-        # Dữ liệu giả cho tần suất sử dụng loại phòng
-        usage_data = [
-            {"room_type": "Deluxe", "usage_count": random.randint(20, 50)},
-            {"room_type": "Suite", "usage_count": random.randint(10, 30)},
-            {"room_type": "Standard", "usage_count": random.randint(30, 60)},
-            {"room_type": "Family", "usage_count": random.randint(5, 15)},
-        ]
-
+        selected_month = request.args.get('month', default=datetime.now().month, type=int)
+        selected_year = request.args.get('year', default=datetime.now().year, type=int)
+        revenue_data = dao.revenue_by_day(selected_year, selected_month)
+        revenue_report_by_month = dao.revenue_report_by_month(selected_year, selected_month)
+        days_rented_in_month_with_status = dao.get_days_rented_in_month_with_status(year=selected_year, month=selected_month)
+        room_statistics = dao.get_room_statistics(year=selected_year, month=selected_month)
         return self.render(
-            'admin/stats.html',
-            revenue_data=revenue_data,
-            usage_data=usage_data,
+            'admin/stats.html', revenue_data=revenue_data,
+            current_year=datetime.now().year,
+            selected_month=selected_month,
+            selected_year=selected_year,
+            revenue_report_by_month=revenue_report_by_month,
+            days_rented_in_month_with_status = days_rented_in_month_with_status,room_statistics=room_statistics
         )
 
 

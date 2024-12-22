@@ -2,86 +2,325 @@
 
 {% block body %}
 <div class="container mt-4">
-    <h1 class="mb-4">Statistics</h1>
 
-    <!-- Biểu đồ doanh thu -->
-    <div class="mb-5">
-        <h3>Monthly Revenue</h3>
-        <canvas id="revenueChart"></canvas>
+    <h1 class="mb-4 text-center text-success">THỐNG KÊ BÁO CÁO</h1>
+    <form method="GET" action="" class="bg-light p-3 rounded shadow-sm mb-4">
+        <div class="row justify-content-center align-items-end">
+            <div class="col-md-3">
+                <label for="month" class="form-label">Chọn tháng:</label>
+                <select name="month" id="month" class="form-select">
+                    {% for i in range(1, 13) %}
+                    <option value="{{ i }}" {% if i == selected_month %}selected{% endif %}>Tháng {{ i }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="year" class="form-label">Chọn năm:</label>
+                <select name="year" id="year" class="form-select">
+                    {% for y in range(2020, current_year + 1) %}
+                    <option value="{{ y }}" {% if y == selected_year %}selected{% endif %}>Năm {{ y }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Xem thống kê</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Nội dung chính -->
+    <div class="row">
+        <!-- Bảng doanh thu -->
+        <div class="col-md-12 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white text-center">
+                    <h5>Bảng doanh thu</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered table-hover text-center">
+                        <thead class="table-dark">
+                        <tr>
+                            <th>Ngày</th>
+                            <th>Doanh thu (VND)</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for data in revenue_data %}
+                        {% if data[1] != 0 %}
+                        <tr>
+                            <td>{{ data[0] }}</td>
+                            <td>{{ data[1] }}</td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Biểu đồ doanh thu -->
+        <div class="col-md-12 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white text-center">
+                    <h5>Biểu đồ doanh thu</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Biểu đồ tần suất sử dụng phòng -->
-    <div>
-        <h3>Room Usage Frequency</h3>
-        <canvas id="usageChart"></canvas>
+    <!-- Bảng doanh thu theo loại phòng -->
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-white text-center">
+                    <h5>Bảng doanh thu theo loại phòng</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered table-hover text-center">
+                        <thead class="table-dark">
+                        <tr>
+                            <th>Loại Phòng</th>
+                            <th>Doanh thu (VND)</th>
+                            <th>Số lượt thuê</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for data in revenue_report_by_month %}
+                        <tr>
+                            <td>{{ data[0] }}</td>
+                            <td>{{ data[1] }}</td>
+                            <td>{{ data[2] }}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Biểu đồ doanh thu theo loại phòng -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white text-center">
+                    <h5>Biểu đồ doanh thu theo loại phòng</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="RoomTypeChart"></canvas>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- Bảng doanh thu theo loại phòng -->
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-white text-center">
+                    <h5>Bảng doanh thu theo loại phòng</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered table-hover text-center">
+                        <thead class="table-dark">
+                        <tr>
+                            <th>Tên phòng</th>
+                            <th>Số lượt thuê / tháng</th>
+                            <th>Tỷ lệ</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for data in room_statistics %}
+                        <tr>
+                            <td>{{ data[0] }}</td>
+                            <td>{{ data[1] }}</td>
+                            <td>{{ data[2] }}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Biểu đồ doanh thu theo loại phòng -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white text-center">
+                    <h5>Biểu đồ tỷ lệ phòng thuê/tháng</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="RoomStatisticsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
-<!-- Tải thư viện Chart.js -->
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Dữ liệu doanh thu
-    const revenueLabels = {{ revenue_data | map(attribute='month') | list | tojson }};
-    const revenueData = {{ revenue_data | map(attribute='revenue') | list | tojson }};
 
-    // Tạo biểu đồ doanh thu
-    const revenueChart = new Chart(document.getElementById('revenueChart'), {
-        type: 'bar',
-        data: {
-            labels: revenueLabels,
-            datasets: [{
-                label: 'Revenue',
-                data: revenueData,
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { position: 'top' }
+    let data = [];
+    let labels = [];
+    {% for s in revenue_data %}
+    data.push({{ s[1] }});
+    labels.push('{{ s[0] }}')
+    {% endfor %}
+    let data2 = [];
+    let labels2 = [];
+    {% for s in revenue_report_by_month %}
+    data2.push({{ s[1] }});
+    labels2.push('{{ s[0] }}')
+    {% endfor %}
+    let data3 = [];
+    let labels3 = [];
+    {% for d in room_statistics %}
+    data3.push({{ d[2] }});
+    labels3.push('{{ d[0] }}')
+    {% endfor %}
+
+    function draw(ctx, data, labels) {
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Doanh thu (VND)',
+                    data: data,
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderWidth: 1,
+                    fill: true,
+                }]
             },
-            scales: {
-                y: { beginAtZero: true }
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return context.parsed.y.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'});
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Doanh thu (VND)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Ngày '
+                        }
+                    }
+                }
             }
-        }
-    });
+        });
+    }
 
-    // Dữ liệu tần suất sử dụng phòng
-    const usageLabels = {{ usage_data | map(attribute='room_type') | list | tojson }};
-    const usageData = {{ usage_data | map(attribute='usage_count') | list | tojson }};
+    function draw2(ctx, data, labels) {
+        new Chart(ctx, {
+            type: 'polarArea',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Doanh thu (VND)',
+                    data: data,
+                    backgroundColor: [
+                        'rgb(255, 99, 132)',
+                        'rgb(75, 192, 192)',
+                        'rgb(255, 205, 86)',
+                        'rgb(201, 203, 207)',
+                        'rgb(54, 162, 235)'
+                    ],
 
-    // Tạo biểu đồ tần suất sử dụng phòng
-    const usageChart = new Chart(document.getElementById('usageChart'), {
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1,
+                    fill: true,
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return context.parsed.y.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'});
+                            }
+                        }
+                    }
+                },
+            }
+        });
+    }
+
+    function draw3(ctx, data, labels) {
+    new Chart(ctx, {
         type: 'pie',
         data: {
-            labels: usageLabels,
+            labels: labels,
             datasets: [{
-                label: 'Usage Frequency',
-                data: usageData,
+                label: 'Phòng',
+                data: data,
                 backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)'
+                    'rgba(123, 104, 238, 0.7)',
+                    'rgba(255, 127, 80, 0.7)',
+                    'rgba(34, 139, 34, 0.7)',
+                    'rgba(255, 69, 0, 0.7)',     // Màu đỏ cam (Orange Red)
+                    'rgba(70, 130, 180, 0.7)',   // Màu xanh dương nhạt (Steel Blue)
+                    'rgba(220, 20, 60, 0.7)'     // Màu đỏ đậm (Crimson)
                 ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)'
-                ],
-                borderWidth: 1
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1,
+                fill: true,
             }]
         },
         options: {
             responsive: true,
             plugins: {
-                legend: { position: 'top' }
-            }
+                legend: {
+                    display: true,
+                    position: 'top',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            return `${context.label}: ${context.raw.toFixed(2)}%`;
+                        }
+                    }
+                }
+            },
         }
     });
+}
+
+    window.onload = function () {
+        const ctx = document.getElementById('revenueChart').getContext('2d');
+        const ctx2 = document.getElementById('RoomTypeChart').getContext('2d');
+        const ctx3 = document.getElementById('RoomStatisticsChart').getContext('2d');
+        draw(ctx, data, labels);
+        draw2(ctx2, data2, labels2);
+        draw3(ctx3, data3, labels3);
+    }
+
+
+
 </script>
 
 {% endblock %}

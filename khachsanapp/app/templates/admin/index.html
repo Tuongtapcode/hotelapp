@@ -4,6 +4,7 @@
 
 
 {% if current_user.is_authenticated %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
  <style>
     #welcomeMessage {
         opacity: 0; /* Ban đầu ẩn */
@@ -24,41 +25,10 @@
         max-height: 0; /* Thu nhỏ chiều cao về 0 */
         pointer-events: none; /* Ngăn người dùng tương tác */
     }
-    .timeline {
-      position: relative;
-      padding-left: 25px;
-    }
-    .timeline::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 10px;
-      width: 2px;
-      height: 100%;
-      background-color: gray;
-    }
-    .timeline-item {
-      position: relative;
-      margin-bottom: 20px;
-      padding-left: 15px;
-    }
-    .timeline-item::before {
-      content: "";
-      position: absolute;
-      top: 5px;
-      left: -20px;
-      width: 10px;
-      height: 10px;
-      background-color: gray;
-      border-radius: 50%;
-    }
-    .icon {
-      color: #007bff;
-      margin-right: 10px;
-    }
+
   </style>
 <div class="container">
-    <div class="mb-4 "id="welcomeMessage" >
+    <div id="welcomeMessage" >
     <h1 class="text-primary">Dashboard - Admin</h1>
     <h2 class="text-secondary">Chào mừng {{ current_user.username }} đến với giao diện quản lý!</h2>
 </div>
@@ -68,24 +38,26 @@
     <div class="col-md-9 text-white p-3 ">
         <div class="row">
             <div class="col-md-5 mb-4">
-                <h3 class="text-center m-auto text-secondary h6">Công suất phòng hiện tại</h3>
+                <h3 class="text-center m-auto text-secondary h6"> Biểu đồ: Công suất phòng hiện tại</h3>
                 <canvas id="roomCapacityChart"></canvas>
-
             </div>
             <div class="col-md-7 mb-4">
-                <h2>Room Guest Counts</h2>
+                <h3 class="text-center m-auto pb-2  text-secondary h6">Bảng thống kê: Số khách hiện có trong phòng</h3>
+
                 <table class="table table-bordered table-striped">
                     <thead class="thead-dark">
                     <tr>
-                        <th>Room Name</th>
+                        <th>Room </th>
+                        <th>Rooom Name</th>
                         <th>Number of Guests</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {% for room in data.room_guest_counts %}
+                    {% for data in room_guest_counts %}
                     <tr>
-                        <td>{{ room.room_name }}</td>
-                        <td>{{ room.guest_count }}</td>
+                        <td>{{ data[0]}}</td>
+                        <td>{{ data[1]}}</td>
+                        <td>{{ data[2]}}</td>
                     </tr>
                     {% endfor %}
                     </tbody>
@@ -93,56 +65,27 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-5 mb-4">
                 <canvas id="usageChart"></canvas>
-            </div>
-            <div class="col-md-7 mb-4">
-
-            </div>
+ <h3 class="text-center m-auto text-secondary h6"> Biểu đồ: Công suất phòng tuần gần nhât</h3>
         </div>
     </div>
-    <div class="col-md-3 bg-light p-3">
-    <!-- Khu vực 25% -->
-        <h5 class="fw-bold h6">CÁC HOẠT ĐỘNG GẦN ĐÂY</h5>
-        <div class="timeline">
-          <!-- Hoạt động 1 -->
-          <div class="timeline-item">
-            <i class="icon bi bi-clipboard"></i>
-            <strong>Hoàng Long</strong> vừa tạo hóa đơn với<br>
-            giá trị <strong>8,678,000</strong><br>
-            <small class="text-muted">4 ngày trước</small>
-          </div>
-          <!-- Hoạt động 2 -->
-          <div class="timeline-item">
-            <i class="icon bi bi-clipboard"></i>
-            <strong>Nguyễn Văn A</strong> vừa tạo hóa đơn với<br>
-            giá trị <strong>13,570,000</strong><br>
-            <small class="text-muted">4 ngày trước</small>
-          </div>
-          <!-- Hoạt động 3 -->
-          <div class="timeline-item">
-            <i class="icon bi bi-clipboard"></i>
-            <strong>Hoàng Long</strong> vừa tạo hóa đơn với<br>
-            giá trị <strong>9,843,000</strong><br>
-            <small class="text-muted">4 ngày trước</small>
-          </div>
-          <!-- Hoạt động 4 -->
-          <div class="timeline-item">
-            <i class="icon bi bi-clipboard"></i>
-            <strong>Hoàng Long</strong> vừa tạo hóa đơn với<br>
-            giá trị <strong>179,000,000</strong><br>
-            <small class="text-muted">4 ngày trước</small>
-          </div>
-          <!-- Hoạt động 5 -->
-          <div class="timeline-item">
-            <i class="icon bi bi-clipboard"></i>
-            <strong>Nguyễn Văn A</strong> vừa tạo hóa đơn với<br>
-            giá trị <strong>2,698,000</strong><br>
-            <small class="text-muted">4 ngày trước</small>
-          </div>
+        <div class="col-md-3 bg-light p-3">
+            <!-- Khu vực 25% -->
+            <h6 class="fw-bold "><strong class="text-dark-50">CÁC HOẠT ĐỘNG GẦN ĐÂY</strong></h6>
+            <div class="timeline">
+                {% for bill in bill_recent_activities %}
+                <div class="timeline-item mb-2">
+                    <i class="icon bi bi-clipboard"></i>
+                    <strong class="text-primary">{{ bill.booking_room.staff.name }}</strong>vừa tạo hóa đơn với<br> giá trị <strong class="text-success">{{
+                    "{:,.0f}".format(bill.total_amount) }}</strong><br>
+                    <small class="text-muted">
+                        {{bill.issue_date }}
+                    </small>
+                </div>
+                {% endfor %}
+            </div>
         </div>
-      </div>
-    </div>
+</div>
 </div>
 </div>
 
@@ -167,6 +110,7 @@
 </form>
 {% endif %}
 <!-- Thư viện Chart.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     // Dữ liệu công suất phòng
@@ -266,6 +210,13 @@
             }, 4100); // Thời gian hiệu ứng (1 giây) + ẩn
         }
     });
+    window.onload = function() {
+        let dates = document.getElementsByClassName("text-muted");
+        for (let d of dates)
+            d.innerText = moment(d.innerText).locale("en").fromNow();
+    }
+
+
 </script>
 
 {% endblock %}
