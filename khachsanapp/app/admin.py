@@ -1,4 +1,4 @@
-from app.models import Room, RoomType, RoomStatus, User, Account, Customer, AccountRole, BookingRoom, hotel
+from app.models import Room, RoomType, RoomStatus, User, Account, Customer, AccountRole, BookingRoom, Coefficient
 from app import app, db
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import Admin, BaseView, expose, AdminIndexView
@@ -19,7 +19,7 @@ class MyAdminIndexView(AdminIndexView):
             "total": dao.count_room()  # Tổng số phòng
         }
         room_guest_counts = dao.count_guests_per_room()
-    # Lấy 5 hóa đơn gần nhất
+        # Lấy 5 hóa đơn gần nhất
         bill_recent_activities = dao.bill_recent_activities()
         return self.render('admin/index.html', data=data, room_guest_counts=room_guest_counts,
                            bill_recent_activities=bill_recent_activities)
@@ -43,6 +43,13 @@ class LogoutView(AuthenticatedView):
     def index(self):
         logout_user()
         return redirect('/admin')
+
+
+class CoefficientView(AdminView):
+    can_export = True
+    can_create = True
+    can_edit = True
+    can_delete = True
 
 
 class RoomView(AdminView):
@@ -78,7 +85,8 @@ class StatsView(AuthenticatedView):
         selected_year = request.args.get('year', default=datetime.now().year, type=int)
         revenue_data = dao.revenue_by_day(selected_year, selected_month)
         revenue_report_by_month = dao.revenue_report_by_month(selected_year, selected_month)
-        days_rented_in_month_with_status = dao.get_days_rented_in_month_with_status(year=selected_year, month=selected_month)
+        days_rented_in_month_with_status = dao.get_days_rented_in_month_with_status(year=selected_year,
+                                                                                    month=selected_month)
         room_statistics = dao.get_room_statistics(year=selected_year, month=selected_month)
         return self.render(
             'admin/stats.html', revenue_data=revenue_data,
@@ -86,14 +94,14 @@ class StatsView(AuthenticatedView):
             selected_month=selected_month,
             selected_year=selected_year,
             revenue_report_by_month=revenue_report_by_month,
-            days_rented_in_month_with_status = days_rented_in_month_with_status,room_statistics=room_statistics
+            days_rented_in_month_with_status=days_rented_in_month_with_status, room_statistics=room_statistics
         )
 
 
 admin.add_view(RoomView(Room, db.session, name='Rooms'))
 admin.add_view(RoomTypeView(RoomType, db.session, name='Room Types'))
 admin.add_view(CustomerView(Customer, db.session, name='Customer'))
-
+admin.add_view(CoefficientView(Coefficient, db.session, name='Coefficient'))
 admin.add_view(StatsView(name='Statistical'))
 admin.add_view(LogoutView(name='Logout'))
 

@@ -205,7 +205,7 @@ def revenue_by_month(year=datetime.now().year):
         func.extract('month', Bill.issue_date)  # Sắp xếp theo tháng
     ).all()
 
-
+#Đếm doanh thu từng ngày trong tháng
 def revenue_by_day(year=datetime.now().year, month=datetime.now().month):
     days_in_month = calendar.monthrange(year, month)[1]  # Số ngày trong tháng
     all_days = [date(year, month, day) for day in range(1, days_in_month + 1)]
@@ -232,7 +232,7 @@ def revenue_by_day(year=datetime.now().year, month=datetime.now().month):
 
     return result
 
-
+#Doanh thu, lượt thuê phòng theo RoomType
 def revenue_report_by_month(year=datetime.now().year, month=datetime.now().month):
     # Subquery để tính doanh thu và lượt thuê theo RoomType
     subquery = db.session.query(
@@ -252,8 +252,8 @@ def revenue_report_by_month(year=datetime.now().year, month=datetime.now().month
     results = db.session.query(
         RoomType.name.label("room_type"),
         func.coalesce(subquery.c.revenue, 0).label("revenue"),  # Doanh thu mặc định là 0 nếu không có dữ liệu
-        func.coalesce(subquery.c.booking_count, 0).label("booking_count")
-        # Lượt thuê mặc định là 0 nếu không có dữ liệu
+        func.coalesce(subquery.c.booking_count, 0).label("booking_count"),  # Lượt thuê mặc định là 0 nếu không có dữ liệu
+        (subquery.c.booking_count / func.sum(subquery.c.booking_count).over().label('Percentage')) * 100
     ).outerjoin(subquery, RoomType.id == subquery.c.room_type_id) \
         .order_by(RoomType.id) \
         .all()
@@ -325,8 +325,6 @@ def bill_recent_activities():
 
 if __name__ == "__main__":
     with app.app_context():
-        i = get_room_statistics();
-        for r in i:
-            print(r[0], r[1], r[2])
+        print(revenue_report_by_month())
 
 
