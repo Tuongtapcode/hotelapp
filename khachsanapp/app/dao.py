@@ -1,6 +1,6 @@
 from email.quoprimime import quote
 
-from sqlalchemy import func, desc, extract
+from sqlalchemy import func, desc, extract, and_, or_
 from app.models import Room, RoomType, RoomStatus, User, Account, Customer, AccountRole, BookingRoom, BookingStatus, \
     Bill
 from app import app, db
@@ -175,6 +175,7 @@ def count_available_rooms():
     return 0
 
 
+# Số khách trong phòng
 def count_guests_per_room():
     return db.session.query(
         Room.id.label("room_id"),
@@ -193,6 +194,7 @@ def count_guests_per_room():
         .all()
 
 
+### Tổng doanh thu
 def revenue_by_month(year=datetime.now().year):
     return db.session.query(
         func.extract('month', Bill.issue_date).label('month'),  # Lấy tháng từ ngày tạo hóa đơn
@@ -205,7 +207,8 @@ def revenue_by_month(year=datetime.now().year):
         func.extract('month', Bill.issue_date)  # Sắp xếp theo tháng
     ).all()
 
-#Đếm doanh thu từng ngày trong tháng
+
+# Đếm doanh thu từng ngày trong tháng
 def revenue_by_day(year=datetime.now().year, month=datetime.now().month):
     days_in_month = calendar.monthrange(year, month)[1]  # Số ngày trong tháng
     all_days = [date(year, month, day) for day in range(1, days_in_month + 1)]
@@ -232,7 +235,8 @@ def revenue_by_day(year=datetime.now().year, month=datetime.now().month):
 
     return result
 
-#Doanh thu, lượt thuê phòng theo RoomType
+
+# Doanh thu, lượt thuê phòng theo RoomType
 def revenue_report_by_month(year=datetime.now().year, month=datetime.now().month):
     # Subquery để tính doanh thu và lượt thuê theo RoomType
     subquery = db.session.query(
@@ -252,7 +256,8 @@ def revenue_report_by_month(year=datetime.now().year, month=datetime.now().month
     results = db.session.query(
         RoomType.name.label("room_type"),
         func.coalesce(subquery.c.revenue, 0).label("revenue"),  # Doanh thu mặc định là 0 nếu không có dữ liệu
-        func.coalesce(subquery.c.booking_count, 0).label("booking_count"),  # Lượt thuê mặc định là 0 nếu không có dữ liệu
+        func.coalesce(subquery.c.booking_count, 0).label("booking_count"),
+        # Lượt thuê mặc định là 0 nếu không có dữ liệu
         (subquery.c.booking_count / func.sum(subquery.c.booking_count).over().label('Percentage')) * 100
     ).outerjoin(subquery, RoomType.id == subquery.c.room_type_id) \
         .order_by(RoomType.id) \
@@ -260,7 +265,7 @@ def revenue_report_by_month(year=datetime.now().year, month=datetime.now().month
     return results
 
 
-def get_days_rented_in_month_with_status(year=datetime.now().year, month=datetime.now().month, status_id=3):
+def get_days_rented_in_month(year=datetime.now().year, month=datetime.now().month, status_id=3):
     # Xác định ngày đầu và cuối của tháng
     start_date = datetime(year, month, 1)
     end_date = datetime(year, month, monthrange(year, month)[1])
@@ -274,25 +279,26 @@ def get_days_rented_in_month_with_status(year=datetime.now().year, month=datetim
                 func.datediff(
                     func.least(BookingRoom.checkout, end_date),
                     func.greatest(BookingRoom.checkin, start_date)
-                )
+                ) + 1  # Thêm 1 để đảm bảo ngày checkin = checkout được tính là 1
             ).label('Số ngày thuê'),
             (func.sum(
                 func.datediff(
                     func.least(BookingRoom.checkout, end_date),
                     func.greatest(BookingRoom.checkin, start_date)
-                )
+                ) + 1  # Tương tự thêm 1 để tính tỷ lệ chính xác
             ) / total_days_in_month * 100).label('Tỷ lệ')  # Tính tỷ lệ %
         )
         .join(Room, Room.id == BookingRoom.room_id)  # Liên kết với bảng Room
         .filter(
-            BookingRoom.checkin <= end_date,
-            BookingRoom.checkout >= start_date,
+            BookingRoom.checkin <= end_date,  # Checkin trước hoặc bằng ngày cuối tháng
+            BookingRoom.checkout >= start_date,  # Checkout sau hoặc bằng ngày đầu tháng
             BookingRoom.booking_status_id == status_id
         )
         .group_by(Room.name)
         .all()
     )
     return results
+
 
 ##Hàm trả về số ngày thuê của mỗi phòng / tháng
 def get_room_statistics(year=datetime.now().year, month=datetime.now().month):
@@ -314,8 +320,47 @@ def get_room_statistics(year=datetime.now().year, month=datetime.now().month):
     return db.session.query(
         subquery.c.name,  # Tên phòng
         subquery.c.rented_days,  # Số ngày thuê của mỗi phòng
-        (subquery.c.rented_days/ func.sum(subquery.c.rented_days).over().label('Percentage'))*100 # Tổng số ngày thuê (OVER() dùng tổng chung)
+        (subquery.c.rented_days / func.sum(subquery.c.rented_days).over().label('Percentage')) * 100
+        # Tổng số ngày thuê (OVER() dùng tổng chung)
     ).all()
+
+
+def get_room_capacity(year=datetime.now().year, month=datetime.now().month):
+    # Tính ngày đầu tiên và ngày cuối cùng của tháng
+    start_date = datetime(year, month, 1).date()  # Chuyển thành datetime.date
+    end_date = datetime(year, month, monthrange(year, month)[1]).date()  # Chuyển thành datetime.date
+
+    # Tạo một subquery để lấy danh sách các booking với trạng thái check-in hoặc check-out
+    bookings = db.session.query(
+        BookingRoom.id,
+        BookingRoom.checkin,
+        BookingRoom.checkout,
+        BookingRoom.room_id,
+        BookingRoom.booking_status_id
+    ).filter(
+        or_(
+            BookingRoom.booking_status_id == 2,  # check-in
+            BookingRoom.booking_status_id == 3  # check-out
+        )
+    ).all()
+
+    # Khởi tạo một dictionary để lưu số lượng phòng đã được sử dụng trong từng ngày
+    room_usage = {start_date + timedelta(days=i): 0 for i in range((end_date - start_date).days + 1)}
+
+    # Duyệt qua từng booking và tính số phòng được sử dụng
+    for booking in bookings:
+        checkin_date = booking.checkin.date()  # Lấy phần ngày của checkin
+        checkout_date = booking.checkout.date()  # Lấy phần ngày của checkout
+
+        # Duyệt qua tất cả các ngày trong khoảng từ checkin đến checkout
+        current_date = checkin_date
+        while current_date <= checkout_date:
+            if start_date <= current_date <= end_date:
+                room_usage[current_date] += 1
+            current_date += timedelta(days=1)
+
+    # Trả về danh sách với định dạng [(ngày trong tháng, số lượng phòng)]
+    return [(date.day, count) for date, count in room_usage.items()]
 
 
 def bill_recent_activities():
@@ -325,6 +370,4 @@ def bill_recent_activities():
 
 if __name__ == "__main__":
     with app.app_context():
-        print(revenue_report_by_month())
-
-
+        print(get_days_rented_in_month())
