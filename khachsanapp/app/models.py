@@ -1,6 +1,5 @@
-
 import hashlib
-from sqlalchemy import Table,Column, Integer, String, ForeignKey, Float, DateTime, Enum
+from sqlalchemy import Table, Column, Integer, String, ForeignKey, Float, DateTime, Enum
 from sqlalchemy.orm import relationship, backref
 from app import app, db
 from enum import Enum as RoleEnum
@@ -16,7 +15,7 @@ class AccountRole(RoleEnum):
 
 class Hotel(db.Model):
     id = Column(Integer, primary_key=True)
-    name = Column(String(100), nullable=False, unique=True)  
+    name = Column(String(100), nullable=False, unique=True)
     address = Column(String(200), nullable=False)
     rooms = relationship('Room', backref='hotel', cascade="all, delete-orphan")
 
@@ -24,9 +23,18 @@ class Hotel(db.Model):
         return self.name
 
 
+class Account(db.Model, UserMixin):
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    username = Column(String(50), unique=True, nullable=False)
+    password = Column(String(100), nullable=False)
+    user_id = Column(Integer, ForeignKey('user.id'), nullable=False, unique=True)
+    user = relationship("User", back_populates="account")
+    role = Column(Enum(AccountRole), default=AccountRole.USER)
+
+
 class User(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
-    type = Column(String(50), nullable=False)  
+    type = Column(String(50), nullable=False)
     name = Column(String(50), nullable=False)
     phone = Column(String(10))
     email = Column(String(50))
@@ -34,18 +42,10 @@ class User(db.Model):
     account = relationship("Account", back_populates="user", uselist=False)
 
     __mapper_args__ = {
-        'polymorphic_identity': 'user', 
-        'polymorphic_on': type 
+        'polymorphic_identity': 'user',
+        'polymorphic_on': type
     }
 
-
-class Account(db.Model, UserMixin):
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    username = Column(String(50), unique=True, nullable=False)
-    password = Column(String(100), nullable=False)  
-    user_id = Column(Integer, ForeignKey('user.id'), nullable=False, unique=True)  
-    user = relationship("User", back_populates="account")  
-    role = Column(Enum(AccountRole), default=AccountRole.USER) 
 
 
 class Customer(User):
@@ -54,7 +54,7 @@ class Customer(User):
     identification_number = Column(String(20), nullable=False)
     nationality = Column(String(50))
     __mapper_args__ = {
-        'polymorphic_identity': 'customer',  
+        'polymorphic_identity': 'customer',
     }
 
 
@@ -62,7 +62,7 @@ class Staff(User):
     id = Column(Integer, ForeignKey('user.id'), primary_key=True)
     rooms_booking = relationship('BookingRoom', backref='staff', lazy=True)
     __mapper_args__ = {
-        'polymorphic_identity': 'staff', 
+        'polymorphic_identity': 'staff',
     }
 
 
@@ -150,8 +150,8 @@ class BookingRoom(db.Model):
 
 class Bill(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
-    total_amount = Column(Float, nullable=False)  
-    issue_date = Column(DateTime, nullable=False, default=datetime.utcnow) 
+    total_amount = Column(Float, nullable=False)
+    issue_date = Column(DateTime, nullable=False, default=datetime.utcnow)
     booking_room_id = Column(Integer, ForeignKey('booking_room.id'), nullable=False, unique=True)  # 1-1 với BookingRoom
     booking_room = relationship("BookingRoom", back_populates="bill", uselist=False)  # 1-1 với BookingRoom
     payments = relationship('Payment', backref='bill', cascade="all, delete-orphan")  # 1-nhiều với Payment
@@ -162,10 +162,10 @@ class Bill(db.Model):
 
 class Payment(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
-    amount = Column(Float, nullable=False)  
-    method = Column(String(50), nullable=False) 
+    amount = Column(Float, nullable=False)
+    method = Column(String(50), nullable=False)
     payment_date = Column(DateTime, nullable=False, default=datetime.utcnow)
-    bill_id = Column(Integer, ForeignKey('bill.id'), nullable=False) 
+    bill_id = Column(Integer, ForeignKey('bill.id'), nullable=False)
 
     def __repr__(self):
         return f"<Payment(method='{self.method}', amount={self.amount}, date={self.payment_date})>"
@@ -173,19 +173,19 @@ class Payment(db.Model):
 
 class DomesticCustomer(Customer):
     id = Column(Integer, ForeignKey('customer.id'), primary_key=True)
-    national_id = Column(String(12), nullable=False) 
+    national_id = Column(String(12), nullable=False)
 
     __mapper_args__ = {
-        'polymorphic_identity': 'domestic_customer', 
+        'polymorphic_identity': 'domestic_customer',
     }
 
 
 class ForeignCustomer(Customer):
     id = Column(Integer, ForeignKey('customer.id'), primary_key=True)
     passport_number = Column(String(20), nullable=False)
-    country = Column(String(50), nullable=False)  
+    country = Column(String(50), nullable=False)
     __mapper_args__ = {
-        'polymorphic_identity': 'foreign_customer', 
+        'polymorphic_identity': 'foreign_customer',
     }
 
 

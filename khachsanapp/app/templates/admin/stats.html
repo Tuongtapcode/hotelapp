@@ -98,12 +98,12 @@
                             <th>Loại Phòng</th>
                             <th>Doanh thu (VND)</th>
                             <th>Số lượt thuê (đã thanh toán) </th>
-                            <th>Tỷ lệ</th>
+                            <th>Tỷ lệ (Số lượt thuê)</th>
 
                         </tr>
                         </thead>
                         <tbody>
-                        {% for data in revenue_report_by_month %}
+                        {% for data in revenue_roomtype_report_by_month %}
                         <tr>
                             <td>{{ data[0] }}</td>
                             <td>{{ data[1] }}</td>
@@ -229,7 +229,7 @@
     {% endfor %}
     let data2 = [];
     let labels2 = [];
-    {% for s in revenue_report_by_month %}
+    {% for s in revenue_roomtype_report_by_month %}
     data2.push({{ s[1] }});
     labels2.push('{{ s[0] }}')
     {% endfor %}
@@ -250,6 +250,19 @@
     function draw(ctx, data, labels) {
         new Chart(ctx, {
             type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Doanh thu (VND)',
+                    data: data,
+                     backgroundColor: [
+                         '#8fd19e'
+                    ],
+
+                    borderWidth: 1,
+                    fill: true,
+                }]
+            },
             data: {
                 labels: labels,
                 datasets: [{
@@ -306,9 +319,9 @@
                     label: 'Doanh thu (VND)',
                     data: data,
                     backgroundColor: [
-                        'rgb(255, 99, 132)',
-                        'rgba(255, 69, 0, 0.7)',
-                        'rgb(255, 205, 86)',
+                        'rgba(255, 69, 0, 0.7)', //màu cam
+                        'rgb(255, 99, 132)', // màu hồng
+                        'rgb(255, 205, 86)',//màu vàng
                         'rgb(201, 203, 207)',
                         'rgb(54, 162, 235)'
                     ],
@@ -347,9 +360,21 @@
                     data: data,
                     backgroundColor: [
                         '#a1def5',  // Màu xanh dương nhạt (Steel Blue)
-                        'rgba(147,112,219, 0.7)',
-                        'rgba(70, 130, 180, 0.7)',
+                        '#80c6e7',  // Màu xanh dương nhạt hơn một chút
+                        '#5fa8d3',  // Màu xanh dương trung bình
+                        '#3f88c4',  // Màu xanh dương đậm hơn
+                        '#2780b2',  // Màu xanh lam đậm
+                        '#17a2b8',  // Màu xanh lam ngọc đậm
                     ],
+                    // backgroundColor: [
+                    //
+                    //
+                    //     '#f5a1a1',  // Hồng đào pastel
+                    //
+                    //     '#f5c1a1',  // Cam sáng pastel
+                    //     '#85c1e9',  // Xanh dương pastel nhạt
+                    // ],
+
                     borderColor: 'rgba(54, 162, 235, 1)',
                     borderWidth: 1,
                     fill: true,
@@ -383,11 +408,12 @@
                     label: 'Phòng',
                     data: data,
                     backgroundColor: [
-                        '#d3d3d3', // Xám nhạt
-                        '#f5f5f5', // Trắng ngà
-                        'gray',
-                        '#f1c40f', // Vàng nhạt
-
+                        '#f5f5f5',  // Trắng ngà (màu xám nhạt nhất)
+                        '#d3d3d3',  // Xám nhạt
+                        '#b0b0b0',  // Xám sáng
+                        '#808080',  // Xám trung bình
+                        '#585858',  // Xám đậm
+                        '#333333',  // Xám rất đậm
                     ],
                     borderColor: 'rgba(54, 162, 235, 1)',
                     borderWidth: 1,

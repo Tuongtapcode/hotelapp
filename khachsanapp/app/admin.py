@@ -15,7 +15,7 @@ class MyAdminIndexView(AdminIndexView):
     @expose('/')
     def index(self):
         total_room = dao.count_room()
-        data = {
+        data_available = {
             "available": dao.count_available_rooms(),  # Số phòng không có khách
             "total": total_room  # Tổng số phòng
         }
@@ -24,7 +24,7 @@ class MyAdminIndexView(AdminIndexView):
         bill_recent_activities = dao.bill_recent_activities()
         room_capacity = dao.get_room_capacity()
 
-        return self.render('admin/index.html', data=data, room_guest_counts=room_guest_counts,
+        return self.render('admin/index.html', data_available=data_available, room_guest_counts=room_guest_counts,
                            bill_recent_activities=bill_recent_activities,room_capacity = room_capacity, total_room=total_room)
 
 
@@ -54,6 +54,11 @@ class CoefficientView(AdminView):
     can_edit = True
     can_delete = True
 
+class UserView(AdminView):
+    can_export = True
+    can_create = True
+    can_edit = True
+    can_delete = True
 
 class RoomView(AdminView):
     column_list = ['id', 'name', 'max_occupancy', 'room_type', 'room_status', 'size']
@@ -87,7 +92,7 @@ class StatsView(AuthenticatedView):
         selected_month = request.args.get('month', default=datetime.now().month, type=int)
         selected_year = request.args.get('year', default=datetime.now().year, type=int)
         revenue_data = dao.revenue_by_day(selected_year, selected_month)
-        revenue_report_by_month = dao.revenue_report_by_month(selected_year, selected_month)
+        revenue_roomtype_report_by_month = dao.revenue_roomtype_report_by_month(selected_year, selected_month)
         days_rented_in_month = dao.get_days_rented_in_month(year=selected_year,
                                                                                     month=selected_month)
         room_statistics = dao.get_room_statistics(year=selected_year, month=selected_month)
@@ -96,7 +101,7 @@ class StatsView(AuthenticatedView):
             current_year=datetime.now().year,
             selected_month=selected_month,
             selected_year=selected_year,
-            revenue_report_by_month=revenue_report_by_month,
+            revenue_roomtype_report_by_month=revenue_roomtype_report_by_month,
             days_rented_in_month=days_rented_in_month, room_statistics=room_statistics
         )
 
@@ -104,6 +109,7 @@ class StatsView(AuthenticatedView):
 admin.add_view(RoomView(Room, db.session, name='Rooms'))
 admin.add_view(RoomTypeView(RoomType, db.session, name='Room Types'))
 admin.add_view(CustomerView(Customer, db.session, name='Customer'))
+admin.add_view(UserView(User, db.session, name='User'))
 admin.add_view(CoefficientView(Coefficient, db.session, name='Coefficient'))
 admin.add_view(StatsView(name='Statistical'))
 admin.add_view(LogoutView(name='Logout'))

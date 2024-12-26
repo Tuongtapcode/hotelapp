@@ -113,14 +113,18 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    let data = [
+        {{ data_available['total'] | default(0) - data_available['available'] | default(0) }},
+        {{ data_available['available'] | default(0) }}
+    ];
+    let lables = ['Đang có khách', 'Đang trống'];
     // Dữ liệu công suất phòng
     const roomCapacityData = {
         datasets: [{
-            data: [{{ data['total'] | default(0) - data['available'] | default(0) }},
-                   {{ data['available'] | default(0) }}],
+            data: data,
             backgroundColor: ['#4caf50', '#ff9800'],
         }],
-        labels: ['Đang có khách', 'Đang trống'],
+        labels: lables,
     };
 
     // Vẽ biểu đồ doughnut công suất phòng
@@ -139,17 +143,18 @@
     });
 
 
-    let data = [];
-    let labels = [];
+    let data2 = [];
+    let labels2 = [];
     {% for r in room_capacity %}
-    data.push({{ r[1]/total_room*100}});
-    labels.push('{{ r[0] }}')
+    data2.push({{ r[1]/total_room*100}});
+    labels2.push('{{ r[0] }}')
     {% endfor %}
+
     const usageData = {
-        labels: labels, // Thay bằng dữ liệu thực nếu có
+        labels: labels2, // Thay bằng dữ liệu thực nếu có
         datasets: [{
             label: 'Công suất phòng (%)',
-            data: data,
+            data: data2,
             borderColor: 'rgba(75, 192, 192, 1)',
             backgroundColor: 'rgba(75, 192, 192, 0.2)',
             tension: 0.4,
@@ -186,19 +191,17 @@
     });
  document.addEventListener("DOMContentLoaded", function () {
         const welcomeMessage = document.getElementById("welcomeMessage");
-
-        // Hiển thị thông báo với hiệu ứng
         if (welcomeMessage) {
             setTimeout(function () {
-                welcomeMessage.style.display = "block"; // Hiển thị phần tử
-                welcomeMessage.classList.add("visible"); // Thêm class 'visible' để hiện hiệu ứng
-            }, 100); // Đợi 500ms sau khi tải trang
+                welcomeMessage.style.display = "block";
+                welcomeMessage.classList.add("visible");
+            }, 100); // Đợi 100ms sau khi tải trang
 
-            // Ẩn thông báo sau 5 giây
+            // Ẩn thông báo sau 3 giây
             setTimeout(function () {
                 welcomeMessage.classList.remove("visible");
                 welcomeMessage.classList.add("hidden"); // Thêm class 'hidden' để kích hoạt hiệu ứng ẩn
-            }, 3500); // 5 giây + 500ms
+            }, 3100); //3 giây + 100ms
 
             // Đặt display: none sau khi hiệu ứng kết thúc
             setTimeout(function () {
